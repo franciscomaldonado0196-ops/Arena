@@ -1,0 +1,19 @@
+ARENA DE WEONES - paquete para app
+
+1) Publicar gratis en internet (GitHub Pages)
+   - Crea cuenta en github.com > New repository > nombre "arena" > Public.
+   - "Add file" > "Upload files" > sube TODOS los archivos de esta carpeta (no la carpeta).
+   - Settings > Pages > Branch: main / root > Save.
+   - En 1-2 min queda en: https://TU-USUARIO.github.io/arena/
+   Ya se puede instalar desde Chrome del celular: menú > "Agregar a pantalla principal".
+
+2) Generar el APK (Android)
+   - Entra a pwabuilder.com, pega tu link y presiona Start.
+   - Package for stores > Android > Generate. Descarga el .zip.
+   - Adentro viene el .apk (para instalar directo) y el .aab (para Google Play).
+   - Guarda bien el archivo "signing.keystore" y su clave: sin eso no puedes actualizar la app.
+
+3) Google Play (opcional): cuenta de desarrollador USD 25, sube el .aab.
+4) App Store (iPhone): PWABuilder > iOS genera un proyecto, pero hay que compilarlo en un Mac con Xcode y pagar USD 99/año.
+
+Para actualizar el juego: reemplaza index.html en GitHub. La app instalada se actualiza sola.
