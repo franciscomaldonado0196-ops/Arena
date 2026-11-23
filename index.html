@@ -245,6 +245,12 @@ canvas.pic{display:block;background:linear-gradient(#f2a65a,#fbe3b0 72%,#e7bf7f 
 @keyframes vsP{50%{transform:scale(1.08) rotate(-5deg)}}
 #sFight .bars.multi .vs{width:36px;height:36px;font-size:15px}
 #sFight .ab{background:linear-gradient(180deg,#2f7482,#1c4752);border:2px solid #5cc2d1;border-radius:14px;box-shadow:0 4px 0 #0e2a31,inset 0 1px 0 rgba(255,255,255,.2)}
+.dl2{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.dg2{align-items:center;text-align:center;padding:6px 6px 8px;gap:4px;border-radius:14px;background:linear-gradient(180deg,#3a2c40,#241b2b)}
+.dg2 .bhead{width:100%;aspect-ratio:96/80;height:auto;border-radius:10px;border:2px solid #120e16;display:block}
+.dg2 b{font-size:14px;line-height:1.1;min-height:2.2em;display:flex;align-items:center;justify-content:center}
+.dg2 .dlv{font-weight:800;font-size:12px;color:#ffe08a;background:rgba(255,210,63,.12);border:1px solid rgba(255,210,63,.35);border-radius:999px;padding:1px 8px}
+.gslots{display:grid;grid-template-columns:1fr;gap:10px}.gslot{display:flex;gap:6px;align-items:stretch}.gslot>button[data-sl]{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px}.gslot>button b{font-size:18px}.gslot>button small{font-size:13px;opacity:.9;font-weight:700}.gslot.cur>button[data-sl]{box-shadow:0 0 0 3px #ffd23f}.sdel{padding:0 12px;font-size:18px}
 </style>
 </head>
 <body>
@@ -254,7 +260,7 @@ canvas.pic{display:block;background:linear-gradient(#f2a65a,#fbe3b0 72%,#e7bf7f 
   <canvas id="cvTitle" class="pic"></canvas>
   <h2 class="tlogo">Arena de Weones</h2>
   <p class="tsub">Gladiadores, botín y sangre en la arena</p>
-  <div class="tmenu"><button class="wide" id="btCont">Continuar</button><button class="wide alt" id="btNewG">Nueva partida</button><button class="wide ghost" id="btOpt">Opciones</button></div>
+  <div class="tmenu"><div id="slots" class="gslots"></div><button class="wide" id="btCont" style="display:none">Continuar</button><button class="wide alt" id="btNewG" style="display:none">Nueva partida</button><button class="wide ghost" id="btOpt">Opciones</button></div>
 </main></section>
 <main id="mCreate">
   <section id="sCreate" class="on">
@@ -295,7 +301,7 @@ canvas.pic{display:block;background:linear-gradient(#f2a65a,#fbe3b0 72%,#e7bf7f 
 <script>
 {
 const $=s=>document.querySelector(s);
-const KEY='coliseo-barro-v3';
+const SLOT=(()=>{try{return Math.min(3,Math.max(1,+localStorage.getItem('coliseo-slot')||1))}catch(e){return 1}})(),SKEY=i=>i===1?'coliseo-barro-v3':'coliseo-barro-v3-s'+i,KEY=SKEY(SLOT);
 const OPT=(()=>{try{return JSON.parse(localStorage.getItem('coliseo-opts'))||{}}catch(e){return{}}})();OPT.oldArt=false;OPT.art='vec';
 const saveOpt=()=>{try{localStorage.setItem('coliseo-opts',JSON.stringify(OPT))}catch(e){}};
 const hash=s=>{let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -3107,7 +3113,7 @@ function kitF(name,cls,sex){const f=fixF(baseF(name,cls,8,sex));if(KIT_RACE)f.ra
 function newCrest(){return{sh:0,c1:R(0,11),c2:R(0,11),div:R(0,7),ch:R(0,11),cc:5}}
 function newGame(name,cls,sex){const g={crest:newCrest(),tcolor:null,team:[kitF(name,cls,sex)],sel:0,gold:60,inv:[],shop:[],shopIn:5,tour:null,tours:0,bossKills:0,auto:false,mode:'1',pick3:[]};genShop(g);return g}
 function load(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY))}catch(e){}
- if(!d){try{const o=JSON.parse(localStorage.getItem('coliseo-barro-v2'));if(o&&o.name&&o.eq){const{gold,shop,shopIn,tours,bossKills,auto,snd,inv,tour,...f}=o;d={team:[f],sel:0,gold:gold||0,inv:inv||[],shop:shop||[],shopIn:shopIn||5,tour:null,tours:tours||0,bossKills:bossKills||0,auto:!!auto,snd,mode:'1',pick3:[]}}}catch(e){}}
+ if(!d&&SLOT===1){try{const o=JSON.parse(localStorage.getItem('coliseo-barro-v2'));if(o&&o.name&&o.eq){const{gold,shop,shopIn,tours,bossKills,auto,snd,inv,tour,...f}=o;d={team:[f],sel:0,gold:gold||0,inv:inv||[],shop:shop||[],shopIn:shopIn||5,tour:null,tours:tours||0,bossKills:bossKills||0,auto:!!auto,snd,mode:'1',pick3:[]}}}catch(e){}}
  if(d&&d.team&&d.team.length){d.crest=d.crest||newCrest();if(d.tcolor===undefined)d.tcolor=null;d.team.forEach(f=>{fixF(f);['sh','be','bo'].forEach(k=>{if(f.eq[k]===undefined)f.eq[k]=null})});d.pick3=d.pick3||[];d.mode=d.mode||'1';d.inv=d.inv||[];d.shop=d.shop||[];if(d.sel>=d.team.length)d.sel=0;return d}return null}
 me=load();
 function screen(id){if(id!=='sFight')setTimeout(menuMusic,60);$('#mCreate').style.display=id==='sCreate'?'':'none';document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));$('#goldBox').hidden=id==='sCreate'||id==='sTitle';$('#btNew').hidden=id!=='sHome';$('#hdrCrest').style.visibility=id==='sHome'||id==='sFight'?'':'hidden';$('#topbar').style.display=id==='sTitle'||id==='sFight'?'none':'';const tt={sCreate:'Nuevo gladiador',sFight:''}[id];$('#hdrTitle').textContent=tt||'';if(id==='sTitle')titleLoop();scrollTo(0,0)}
@@ -4388,15 +4394,24 @@ function rRaid(){const el=$('#advBody'),kills=me.raidKills||[];me.rpick=(me.rpic
  el.querySelectorAll('[data-rd]').forEach(b=>b.onclick=()=>{me.rsel=+b.dataset.rd;save();rRaid()});
  $('#btRaid').onclick=()=>{if(!me.rpick.length)return;audio();fight(me.rpick.map(i=>me.team[i]),[makeRaid(sel)],'raid')}}
 
+const BHC=[[125,108,110,92],[115,135,165,138],[135,103,102,85],[118,108,110,92],[133,108,112,93],[138,122,110,92],[68,148,120,100],[140,110,112,93],[42,128,125,104]];
+function bossHead(cv,D){const W=96,H=80,c=fit(cv,W,H);c.clearRect(0,0,W,H);const g=c.createRadialGradient(W/2,H*.55,6,W/2,H*.55,W*.6);g.addColorStop(0,'#5a3b2a');g.addColorStop(1,'#1a1210');c.fillStyle=g;c.fillRect(0,0,W,H);
+ try{if(!D._bh){if(!D._bf)D._bf=makeMonster(D.boss[0],D.hi,true,false,D);const o=document.createElement('canvas');o.width=o.height=400;const oc=o.getContext('2d');drawF(oc,lookOf(D._bf),200,390,-1,{sc:1.6,t:0});
+  const d=oc.getImageData(0,0,400,400).data,A=(x,y)=>d[(y*400+x)*4+3]>20;let y0=-1;for(let y=0;y<400&&y0<0;y++)for(let x=0;x<400;x+=2)if(A(x,y)){y0=y;break}
+  let y1=y0;for(let y=399;y>y0;y--){let f=0;for(let x=0;x<400;x+=3)if(A(x,y)){f=1;break}if(f){y1=y;break}}
+  const hh=Math.max(40,(y1-y0)*.34);let xs=0,n=0;for(let y=y0;y<y0+hh*.6;y++)for(let x=0;x<400;x+=2)if(A(x,y)){xs+=x;n++}
+  const cx=n?xs/n:200,sz=hh*1.15,M=BHC[DUNGEONS.indexOf(D)];D._bh=M?[o,...M]:[o,cx-sz*W/H/2,y0-sz*.08,sz*W/H,sz]}
+  const[o,sx,sy,sw,sh]=D._bh;c.drawImage(o,sx,sy,sw,sh,0,0,W,H)}catch(e){c.font='40px sans-serif';c.textAlign='center';c.fillText('👑',W/2,H*.7)}
+ const v=c.createLinearGradient(0,H*.65,0,H);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.5)');c.fillStyle=v;c.fillRect(0,H*.65,W,H*.35)}
 function rDungeon(){const el=$('#advBody'),r=me.run;
  if(!r){me.dsel=me.dsel||0;const DS=DUNGEONS[me.dsel];me.dpick=(me.dpick||[]).filter(i=>canFight(i)&&me.team[i].lvl>=DS.lo);
-  el.innerHTML=`<div class="sec" style="margin-top:0"><h2>Elige mazmorra</h2></div><div class="dlist">${DUNGEONS.map((D,i)=>D.ngp&&!OPT.ngp?'':`<button class="dg${i===me.dsel?' on':''}" data-dg="${i}"><b>${D.n} <span style="color:#e8c26a">Nv ${D.lo}–${D.hi}</span></b><small>${D.t}${SETS[i]?` · Set: ${SETS[i].n}`:''}</small><small class="embs">${D.emb.map(k=>I[k].n).join(' · ')}</small></button>`).join('')}</div>
+  el.innerHTML=`<div class="sec" style="margin-top:0"><h2>Elige mazmorra</h2></div><div class="dlist dl2">${DUNGEONS.map((D,i)=>D.ngp&&!OPT.ngp?'':`<button class="dg dg2${i===me.dsel?' on':''}" data-dg="${i}"><canvas class="bhead" data-bh="${i}"></canvas><b>${D.n}</b><span class="dlv">Nv ${D.lo}–${D.hi}</span></button>`).join('')}</div>
   <div class="card crypt" style="margin-top:12px"><h2>${DS.n} · Nv ${DS.lo}–${DS.hi}</h2><p class="hint">Monstruos y botín de nivel ${DS.lo} a ${DS.hi} Solo suelta equipo propio de la mazmorra, raro o mejor, y con poca frecuencia. Recorre un mapa de ${DEPTH} niveles eligiendo tu camino hasta <b>${DS.boss[1]}</b>. Cada sala lleva a dos caminos nuevos. Aquí aparecen objetos épicos y <b style="color:#ff6b8e">emblemáticos</b>: armas, armaduras, herramientas y mascotas.</p>
   <ul class="risk"><li>La vida no se recupera entre combates, salvo en fuentes. Los enemigos se vuelven más duros a cada nivel.</li><li>Si un luchador cae, sale de la expedición y vuelve a casa <b>herido por 4 combates</b>, con todo su equipo.</li><li>El botín solo es tuyo al salir. Si cae todo el grupo, se pierde.</li></ul></div>
   <div class="sec"><h2>Grupo</h2><span class="hint" style="margin:0">${me.dpick.length}/3</span></div>
   <div class="pick">${me.team.map((f,i)=>`<button class="pk${me.dpick.includes(i)?' on':''}" data-p="${i}" ${canFight(i)&&f.lvl>=DS.lo?'':'disabled'}><canvas class="pic"></canvas><b>${f.name}</b><small>${f.inj?'Herido '+f.inj:f.lvl<DS.lo?'Nv '+f.lvl+' · mín '+DS.lo:'Nv '+f.lvl}</small></button>`).join('')}</div><p class="hint">Solo pueden entrar luchadores de nivel ${DS.lo} o más. El botín sale al nivel del luchador más bajo del grupo (máximo ${DS.hi}), así todos lo pueden usar.</p>
   <button class="wide" id="btEnter" ${me.dpick.length?'':'disabled'}>Entrar a la cripta</button>`;
-  requestAnimationFrame(()=>el.querySelectorAll('.pk canvas').forEach((cv,i)=>portrait(cv,me.team[i],50,56)));
+  requestAnimationFrame(()=>{el.querySelectorAll('.pk canvas').forEach((cv,i)=>portrait(cv,me.team[i],50,56));el.querySelectorAll('[data-bh]').forEach(cv=>bossHead(cv,DUNGEONS[+cv.dataset.bh]))});
   el.querySelectorAll('.pk').forEach(b=>b.onclick=()=>{const i=+b.dataset.p,k=me.dpick.indexOf(i);if(k>=0)me.dpick.splice(k,1);else if(me.dpick.length<3)me.dpick.push(i);save();rDungeon()});
   el.querySelectorAll('.dg').forEach(b=>b.onclick=()=>{me.dsel=+b.dataset.dg;save();rDungeon()});
   $('#btEnter').onclick=()=>{if(!me.dpick.length)return;audio();const party=[...me.dpick];me.run={dk:me.dsel||0,party,hp:party.map(()=>null),floor:0,bag:[],gold:0,lvl:Math.round(party.reduce((s,i)=>s+me.team[i].lvl,0)/party.length),theme:pick(MON),map:genMap(),at:null,path:[]};me.dpick=[];sfx('dark');save();rAdv()};return}
@@ -4442,7 +4457,11 @@ function openDoor(d){const r=me.run;
 
 addEventListener('pointerdown',()=>{audio();if(!running&&!$('#sFight').classList.contains('on'))menuMusic()},{once:true});
 $('#btNew').addEventListener('click',()=>{if(!running)titleScreen()});
-function titleScreen(){screen('sTitle');$('#btCont').hidden=!me;$('#btNewG').textContent=me?'Nueva partida':'Empezar'}
+function titleScreen(){screen('sTitle');$('#btCont').hidden=!me;$('#btNewG').textContent=me?'Nueva partida':'Empezar';
+ const info=i=>{try{const d=JSON.parse(localStorage.getItem(SKEY(i)));if(d&&d.team&&d.team.length)return d}catch(e){}return null};
+ $('#slots').innerHTML=[1,2,3].map(i=>{const d=i===SLOT&&me?me:info(i);return`<div class="gslot${i===SLOT?' cur':''}"><button class="wide${d?'':' ghost'}" data-sl="${i}"><b>Partida ${i}</b><small>${d?`${d.team[0].name} · ${d.team.length} luchador${d.team.length>1?'es':''} · Nv ${Math.max(...d.team.map(f=>f.lvl||1))} · ${d.gold} oro`:'Vacía · Nueva partida'}</small></button>${d?`<button class="ghost sm sdel" data-sd="${i}" title="Borrar">🗑</button>`:''}</div>`}).join('');
+ $('#slots').querySelectorAll('[data-sl]').forEach(b=>b.onclick=()=>{audio();const i=+b.dataset.sl;if(i===SLOT){if(me)home();else createScreen();return}try{localStorage.setItem('coliseo-slot',i);localStorage.setItem('coliseo-go','1')}catch(e){}location.reload()});
+ $('#slots').querySelectorAll('[data-sd]').forEach(b=>b.onclick=()=>{const i=+b.dataset.sd;modal(`<div class="big">Borrar partida ${i}</div><p>Se pierden sus luchadores, oro y objetos. No se puede deshacer.</p><button class="wide" id="btDelS">Sí, borrar</button><p></p><button class="ghost wide" id="btCl">Cancelar</button>`);$('#btCl').onclick=close;$('#btDelS').onclick=()=>{try{localStorage.removeItem(SKEY(i));if(i===1)localStorage.removeItem('coliseo-barro-v2')}catch(e){}if(i===SLOT)me=null;close();titleScreen()}})}
 $('#btCont').onclick=()=>{audio();if(me)home()};
 $('#btNewG').onclick=()=>{audio();if(me)resetModal();else createScreen()};
 $('#btOpt').onclick=optModal;
@@ -4515,7 +4534,7 @@ addEventListener('resize',()=>{ctx=null});
 
 ['cazadorNoche','cazadoraSangre','eruditoCosmico','verdugoPlata'].forEach(k=>{if(CLS[k])CLS[k].old=1});
 if(me){me.team.forEach(f=>{const n=OLDMAP[f.cls];if(n){f.vis=f.cls;f.cls=n;f.path=null}})}
-if(me){me.team.forEach(f=>derive(f))}if(me)save();titleScreen();
+if(me){me.team.forEach(f=>derive(f))}if(me)save();titleScreen();try{if(localStorage.getItem('coliseo-go')){localStorage.removeItem('coliseo-go');if(me)home();else createScreen()}}catch(e){}
 }
 </script>
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js'))</script>
