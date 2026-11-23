@@ -226,6 +226,25 @@ canvas.pic{display:block;background:linear-gradient(#f2a65a,#fbe3b0 72%,#e7bf7f 
 @media(max-width:420px){.rc b{font-size:12px}.rq small{font-size:10px}}
 .races{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:10px}.rcb{text-align:left;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:7px 9px;color:inherit;font:inherit;cursor:pointer}.rcb.on{border-color:#e8a33a;box-shadow:0 0 0 2px rgba(232,163,58,.35)}.rcb b{display:block;font-size:14px}.rcb small{display:block;font-size:11px;color:var(--muted);line-height:1.3}.syn{color:#3fb24f;font-size:11px}
 @media (min-width:1000px) and (orientation:landscape){#sFight main{max-width:min(100%,calc((100dvh - 120px)*16/9 + 460px))!important}#sFight .arena{display:grid!important;grid-template-columns:220px minmax(0,1fr) 220px;gap:10px;aspect-ratio:auto!important;align-items:start;background:none!important;overflow:visible!important}#sFight .arena{border:0!important;border-radius:0!important}#sFight #cv{position:relative!important;inset:auto!important;grid-column:2;grid-row:1;width:100%;height:auto!important;aspect-ratio:16/9;border-radius:14px;border:3px solid var(--terra2)}#sFight .bars .hb b,#sFight .bars .hb small{color:#f4e6cc}#sFight .bars{display:contents!important;position:static!important}#sFight .bars>.side{grid-row:1;background:#2b211c;border-radius:12px;padding:10px;align-self:start}#sFight .bars>.side:first-child{grid-column:1}#sFight .bars>.side:last-child{grid-column:3}#sFight .bars>.vs{display:none}#sFight .bars.raid .side:first-child{grid-template-columns:1fr}}
+
+#btSkip{display:none!important}
+#sFight .ctrl{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+#sFight .ctrl button{border-radius:999px;font-size:15px;padding:10px 4px}
+#btAuto::before{content:'🤖 '}#btSpd::before{content:'⏩ '}#btSnd::before{content:'🎵 '}
+#sFight .bars{background:linear-gradient(180deg,#3d2b20,#1f1611);border:2px solid #7a5532;border-radius:18px;padding:10px 12px 8px;box-shadow:inset 0 1px 0 rgba(255,220,160,.12),0 8px 16px rgba(0,0,0,.5);margin-top:8px}
+#sFight .hb b{font-size:19px;color:#8fd8ff;text-shadow:0 2px 0 #000,0 0 8px rgba(80,180,255,.35)}
+#sFight .hb.r b{color:#ff9a84;text-shadow:0 2px 0 #000,0 0 8px rgba(255,90,60,.35)}
+#sFight .hb .b{height:20px;border-radius:12px;border:2px solid #0d0806;background:#0d0806;box-shadow:inset 0 2px 5px rgba(0,0,0,.7)}
+#sFight .hb .b i{background:linear-gradient(180deg,#8cf0a0,#3aa655 55%,#21783a);border-radius:10px}
+#sFight .hb.r .b i{background:linear-gradient(180deg,#8cf0a0,#3aa655 55%,#21783a)}
+#sFight .hb .b i::after{content:'';position:absolute;left:5px;right:5px;top:3px;height:4px;border-radius:3px;background:rgba(255,255,255,.4)}
+#sFight .hb .b u{border-radius:10px}
+#sFight .hb small{color:#fff;font-size:14px;text-shadow:0 1px 0 #000}
+#sFight .hb .lvt{background:rgba(255,210,63,.14);border:1px solid rgba(255,210,63,.35);color:#ffe08a;border-radius:999px;padding:0 7px;opacity:1}
+#sFight .vs{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;align-self:center;padding:0;background:radial-gradient(circle at 35% 30%,#ffe27a,#e8791f 58%,#8a3512);color:#2a1006;font-size:20px;border:3px solid #0d0806;box-shadow:0 0 16px rgba(255,170,60,.6);animation:vsP 1.6s ease-in-out infinite}
+@keyframes vsP{50%{transform:scale(1.08) rotate(-5deg)}}
+#sFight .bars.multi .vs{width:36px;height:36px;font-size:15px}
+#sFight .ab{background:linear-gradient(180deg,#2f7482,#1c4752);border:2px solid #5cc2d1;border-radius:14px;box-shadow:0 4px 0 #0e2a31,inset 0 1px 0 rgba(255,255,255,.2)}
 </style>
 </head>
 <body>
@@ -244,7 +263,7 @@ canvas.pic{display:block;background:linear-gradient(#f2a65a,#fbe3b0 72%,#e7bf7f 
     <label for="inName">Nombre de tu gladiador</label>
     <input id="inName" maxlength="14" autocomplete="off" placeholder="Escribe un nombre">
     <p class="hint" id="prevTxt">El nombre decide su cara y sus atributos. La raza da atributos base y la clase su equipo; si comparten atributo, tienen sinergia.</p>
-    <div id="sexC"></div>
+    <div id="sexC"></div><div id="cVis" class="chips" style="margin-top:8px"></div>
     <div class="classes" id="classes"></div>
     <p></p>
     <button id="btCreate" class="wide">Entrar al coliseo</button>
@@ -277,7 +296,7 @@ canvas.pic{display:block;background:linear-gradient(#f2a65a,#fbe3b0 72%,#e7bf7f 
 {
 const $=s=>document.querySelector(s);
 const KEY='coliseo-barro-v3';
-const OPT=(()=>{try{return JSON.parse(localStorage.getItem('coliseo-opts'))||{}}catch(e){return{}}})();
+const OPT=(()=>{try{return JSON.parse(localStorage.getItem('coliseo-opts'))||{}}catch(e){return{}}})();OPT.oldArt=false;OPT.art='vec';
 const saveOpt=()=>{try{localStorage.setItem('coliseo-opts',JSON.stringify(OPT))}catch(e){}};
 const hash=s=>{let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
 const rng=seed=>()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
@@ -290,23 +309,23 @@ const HIT='#ff7a66';
 /* ================= DATA ================= */
 const RAR=[{n:'Común',c:'#9aa0a6',m:1,p:1},{n:'Rara',c:'#3d8bfd',m:1.25,p:2.5},{n:'Épica',c:'#a55eea',m:1.5,p:6},{n:'Legendaria',c:'#f39c12',m:1.9,p:15},{n:'Emblemática',c:'#ff3d6e',m:1,p:1}];
 const I={
- garrote:{c:'w',n:'Garrote',d:[5,9],spd:-1,p:25,len:36},
- cuchillo:{c:'w',n:'Cuchillo',d:[3,5],spd:3,combo:.3,p:25,len:16},
+ garrote:{c:'w',n:'Garrote',d:[5,12],spd:-1,p:25,len:36},
+ cuchillo:{c:'w',n:'Cuchillo',d:[1,8],spd:3,combo:.3,p:25,len:16},
  espada:{c:'w',n:'Espada',d:[5,8],spd:1,acc:.05,p:45,len:34,ab:'parada'},
  alfanje:{c:'w',n:'Alfanje',d:[5,8],spd:1,p:45,len:30,ab:'abordaje'},
  trabuco:{c:'w',n:'Trabuco',d:[6,9],spd:-1,p:70,len:30,ab:'trabuco',gun:1},
- pistola:{c:'w',n:'Pistola de chispa',d:[4,7],spd:1,p:55,len:18,ab:'disparo',gun:1},
- katana:{c:'w',n:'Katana',d:[8,12],spd:1,acc:.06,p:80,len:36,ab:'iai'},
+ pistola:{c:'w',n:'Pistola de chispa',d:[1,10],spd:2,p:55,len:18,ab:'disparo',gun:1,combo:.3},
+ katana:{c:'w',n:'Katana',d:[3,12],spd:1,acc:.1,p:80,len:36,ab:'iai'},
  naginata:{c:'w',n:'Naginata',d:[6,10],p:60,len:46,ab:'estocada'},
- revolver:{c:'w',n:'Revólver',d:[4,6],spd:2,p:65,len:18,ab:'rafaga',gun:1},
- lazo:{c:'w',n:'Lazo',d:[2,4],spd:2,acc:.12,combo:.3,p:40,len:30,ab:'lazo'},
+ revolver:{c:'w',n:'Revólver',d:[5,12],spd:1,p:65,len:18,ab:'rafaga',gun:1,combo:.4},
+ lazo:{c:'w',n:'Lazo',d:[2,10],spd:2,acc:.12,combo:.3,p:40,len:30,ab:'lazo'},
  hacha:{c:'w',n:'Hacha vikinga',d:[6,10],spd:-1,p:50,len:28,ab:'tajo'},
- martillo:{c:'w',n:'Martillo de guerra',d:[8,13],spd:-2,acc:-.08,p:60,len:28,ab:'aturdir'},
- kunai:{c:'w',n:'Kunai',d:[3,6],spd:3,combo:.35,p:45,len:16,ab:'shuriken'},
- tridente:{c:'w',n:'Tridente',d:[6,9],p:50,len:42,ab:'estocada'},
- lanza:{c:'w',n:'Lanza',d:[5,9],acc:.05,p:40,len:44,ab:'estocada'},
- masamune:{c:'w',n:'Masamune',base:'katana',d:[10,14],spd:1,acc:.1,p:600,len:36,ab:'alma',emb:'#9fe3ff',noShop:1},
- malabala:{c:'w',n:'Mala Bala',base:'revolver',d:[7,10],spd:2,p:600,len:18,ab:'seisbalas',gun:1,emb:'#ff5a3d',noShop:1},
+ martillo:{c:'w',n:'Martillo de guerra',d:[10,20],spd:-2,acc:-.1,p:60,len:28,ab:'aturdir'},
+ kunai:{c:'w',n:'Kunai',d:[3,5],spd:4,combo:.5,p:45,len:16,ab:'shuriken'},
+ tridente:{c:'w',n:'Tridente',d:[6,12],p:50,len:42,ab:'estocada',spd:1},
+ lanza:{c:'w',n:'Lanza',d:[5,9],acc:.1,p:40,len:44,ab:'estocada',spd:1,combo:.2},
+ masamune:{c:'w',n:'Masamune',base:'katana',d:[10,14],spd:1,acc:.2,p:600,len:36,ab:'alma',emb:'#9fe3ff',noShop:1,combo:.2},
+ malabala:{c:'w',n:'Mala Bala',base:'revolver',d:[3,12],spd:3,p:600,len:18,ab:'seisbalas',gun:1,emb:'#ff5a3d',noShop:1,acc:-.1,combo:.4},
  excalibur:{c:'w',n:'Excalibur',base:'espada',d:[10,13],spd:1,acc:.08,p:650,len:38,ab:'avalon',emb:'#ffe08a',noShop:1},
  tizona:{c:'w',n:'Tizona',base:'espada',d:[9,13],spd:1,combo:.2,p:600,len:36,ab:'campeador',emb:'#ff8a3d',noShop:1},
  gungnir:{c:'w',n:'Gungnir',base:'lanza',d:[10,14],acc:.2,p:620,len:48,ab:'odin',emb:'#b0e0ff',noShop:1},
@@ -367,10 +386,10 @@ const AB={
  iai:{n:'Iaijutsu',cd:5,t:'Corte crítico garantizado'},
  estocada:{n:'Estocada',cd:4,t:'Atraviesa escudo y armadura'},
  rafaga:{n:'Ráfaga',cd:5,t:'Tres disparos seguidos'},
- lazo:{n:'Lazo',cd:6,t:'Atrapa al rival y lo desarma'},
+ lazo:{n:'Lazo',cd:7,t:'Atrapa al rival y lo desarma'},
  tajo:{n:'Tajo brutal',cd:5,t:'Golpe con 80% más de daño'},
- aturdir:{n:'Aturdir',cd:6,t:'Golpe que deja al rival sin turno'},
- shuriken:{n:'Shurikens',cd:5,t:'Lanza tres estrellas'},
+ aturdir:{n:'Aturdir',cd:7,t:'Golpe que deja al rival sin turno'},
+ shuriken:{n:'Shurikens',cd:3,t:'Lanza tres estrellas'},
  muro:{n:'Muro de escudo',cd:7,t:'Bloquea los próximos 3 golpes'},
  red:{n:'Red',cd:8,t:'Inmoviliza al rival 2 turnos'},
  humo:{n:'Humo',cd:7,t:'Esquivas casi todo durante 3 ataques'},
@@ -387,7 +406,7 @@ const AB={
  fuego:{n:'Aliento de fuego',cd:7,t:'Quema a todos los enemigos'},
  alma:{n:'Corte del alma',cd:5,t:'Crítico que ignora armadura y te cura'},
  seisbalas:{n:'Seis balas malditas',cd:6,t:'Seis disparos que pueden aturdir'},
- avalon:{n:'Juicio de Avalón',cd:7,t:'Golpe sagrado que cura a tu equipo'},
+ avalon:{n:'Juicio de Avalón',cd:10,t:'Golpe sagrado que cura a tu equipo'},
  campeador:{n:'Furia del Campeador',cd:5,t:'Tres tajos imparables'},
  odin:{n:'Lanza de Odín',cd:5,t:'Nunca falla, atraviesa y es crítico'},
  trueno:{n:'Trueno',cd:7,t:'Rayos sobre todos los enemigos, que quedan aturdidos'},
@@ -478,7 +497,7 @@ const PATHS={
   {n:['Caballero oscuro','Señor oscuro','Heraldo del eclipse'],t:'Robo de vida y terror',m:[{ls:.08},{dmg:.12},{ls:.08,stunHit:.08}],ab:'eclipse',cape:'#2b1a3a'}],
  gladiador:[{n:['Campeón de la arena','Ídolo del coliseo','Inmortal'],t:'Fama, contraataques y aguante',m:[{fame:.3,ctr:.12},{hp:.1},{ctr:.1,dmg:.1,fame:.3}],ab:'ovacion',cape:'#c9a227'},
   {n:['Reciario','Cazador de la red','Señor del tridente'],t:'Red, aturdir y esquiva',m:[{stunHit:.06},{dodge:.06},{stunHit:.06,dmg:.12}],ab:'redtridente',cape:'#17808a'}]};
-const SPEC={tanque:{n:'Tanque',m:{arm:3,hp:.18,block:.05},t:'Mucha vida y armadura'},asesino:{n:'Asesino',m:{crit:.1,dmg:.06},t:'Críticos letales'},tirador:{n:'Tirador',m:{gun:.3,acc:.08},t:'Puntería y pólvora'},veloz:{n:'Veloz',m:{dodge:.08,spd:2,combo:.1},t:'Esquiva y combos'},vampirico:{n:'Chupasangre',m:{ls:.12},t:'Roba vida al golpear'},venenoso:{n:'Venenoso',m:{poisonHit:.16},t:'Envenena al golpear'},contragolpe:{n:'Contragolpeador',m:{ctr:.18},t:'Devuelve los golpes'},aturdidor:{n:'Rompecráneos',m:{stunHit:.09},t:'Aturde con sus golpes'},domador:{n:'Domador',m:{pet:.5},t:'Mascota feroz'},bruto:{n:'Bruto',m:{dmg:.16},t:'Pega muy fuerte'},saboteador:{n:'Saboteador',m:{antiHeal:.35},t:'Sus golpes impiden curarse'}};
+const SPEC={tanque:{n:'Tanque',m:{arm:3,hp:.18,block:.05},t:'Mucha vida y armadura'},asesino:{n:'Asesino',m:{crit:.1,dmg:.06},t:'Críticos letales'},tirador:{n:'Tirador',m:{gun:.3,acc:.1},t:'Puntería y pólvora'},veloz:{n:'Veloz',m:{dodge:.08,spd:2,combo:.1},t:'Esquiva y combos'},vampirico:{n:'Chupasangre',m:{ls:.12},t:'Roba vida al golpear'},venenoso:{n:'Venenoso',m:{poisonHit:.16},t:'Envenena al golpear'},contragolpe:{n:'Contragolpeador',m:{ctr:.18},t:'Devuelve los golpes'},aturdidor:{n:'Rompecráneos',m:{stunHit:.1},t:'Aturde con sus golpes'},domador:{n:'Domador',m:{pet:.5},t:'Mascota feroz'},bruto:{n:'Bruto',m:{dmg:.2},t:'Pega muy fuerte'},saboteador:{n:'Saboteador',m:{antiHeal:.5},t:'Sus golpes impiden curarse'}};
 function giveSpec(f){const ks=Object.keys(SPEC).filter(k=>k!=='domador'||f.eq.p).filter(k=>k!=='tirador'||f.eq.w.some(w=>w&&I[w.k].gun));f.spec=pick(ks);return f}
 const BK={d0:{sc:1,aura:'120,255,190',eyes:'#7cff9a',deco:'crown',say:['Tus huesos serán mi nuevo trono','¡Arrodíllate ante el rey de los muertos!','Bienvenido a mi cripta, carne fresca']},
  d1:{sc:1,aura:'110,220,255',eyes:'#7ef9ff',skin:'#9fc7c9',deco:'flames',fc:'#7ef9ff',say:['El mar se tragará tu alma','Yo-ho... ¡a la tumba contigo!','Ni la muerte me detuvo, menos tú']},
@@ -564,7 +583,7 @@ Object.assign(AB,{
  bolaFuego:{n:'Bola de fuego',cd:6,t:'Explosión de fuego contra todos'},
  santa:{n:'Agua bendita',cd:7,t:'Quema y ciega a todos los enemigos'},
  beber:{n:'Beber sangre',cd:7,t:'Recupera 30% de vida y te enfurece'},
- maleficio:{n:'Maleficio',cd:7,t:'Ciega, envenena y maldice a todos los enemigos'},berserk:{n:'Berserk',cd:9,t:'Solo con menos de 10% de vida: tres ataques seguidos y los 3 próximos golpes hacen el doble de daño'},
+ maleficio:{n:'Maleficio',cd:7,t:'Ciega, envenena y maldice a todos los enemigos'},berserk:{n:'Berserk',cd:9,t:'Solo con menos de 25% de vida: tres ataques seguidos y los 3 próximos golpes hacen el doble de daño'},
  drenar:{n:'Drenar',cd:5,t:'El murciélago muerde y cura a su dueño'},
  aranazo:{n:'Arañazo',cd:4,t:'El gato ataca con un crítico seguro'},
  sangria:{n:'Sangría',cd:7,t:'Drena a todos los enemigos y te cura'},
@@ -593,7 +612,7 @@ Object.assign(AB,{
  lanzarHacha:{n:'Lanzar tomahawk',cd:4,t:'Arroja el hacha girando, atraviesa armadura'},
  lluviaFlechas:{n:'Lluvia de flechas',cd:6,t:'Cinco flechas contra enemigos al azar'},
  golpeContado:{n:'Golpe de honor',cd:5,t:'Golpe imparable que aturde'},
- espiritu:{n:'Espíritu del tótem',cd:7,t:'Te cura 20% y enfurece a tu equipo'},
+ espiritu:{n:'Espíritu del tótem',cd:7,t:'Te cura 30% y enfurece a tu equipo'},
  embestida:{n:'Embestida',cd:6,t:'El bisonte embiste con fuerza doble y aturde'},
  espiritus:{n:'Danza de los espíritus',cd:8,t:'Cura 25% a tu equipo y ciega a los enemigos'},
  estampida:{n:'Estampida',cd:7,t:'Una carga que golpea y aturde a todos los enemigos'}});
@@ -861,16 +880,16 @@ PATH_AB1.artillero=[['Cañonazo','Disparo brutal que aturde',5,{ty:'tiro',lo:11,
 
 /* ===== ARQUETIPOS ===== */
 Object.assign(CLS,{
- guardian:{n:'Guardián',vis:['caballero','enano','gladiador'],kit:['espada','escudo','yelmoc'],b:{hp:8},shirt:'#8a8f96',pants:'#3a3f45',g:['espada','martillo','escudo','yelmoc','galea','cota','coraza','grebas','hombrerasAcero','botasHierro','cinturonHierro','perro']},
+ guardian:{n:'Guardián',vis:['caballero','enano','gladiador'],kit:['espada','escudo','yelmoc'],b:{hp:50},shirt:'#8a8f96',pants:'#3a3f45',g:['espada','martillo','escudo','yelmoc','galea','cota','coraza','grebas','hombrerasAcero','botasHierro','cinturonHierro','perro']},
  berserker:{n:'Berserker',vis:['vikingo','semiorco'],kit:['hacha','yelmov'],b:{str:2},shirt:'#6b4a2b',pants:'#4a3b2a',g:['hacha','granHacha','martillo','mandoble','hachaCorta','cuerno','hidromiel','yelmov','pieles','cota','lobo','oso']},
  duelista:{n:'Duelista',vis:['samurai','pirata','elfo'],kit:['espada','botasCuero'],b:{agi:2},shirt:'#2c3e6b',pants:'#1f2a44',g:['espada','katana','estoque','alfanje','sableFortuna','espadaElfica','nodachi','abanico','kabuto','tricornio','chaleco','dou','aguila','loro']},
- asesino:{n:'Asesino',vis:['ninja','mediano','tiefling'],kit:['kunai','capucha','humo'],b:{agi:1,spd:1},shirt:'#22252b',pants:'#22252b',g:['kunai','daga','cuchillo','dagaTramposa','wakizashi','garras','humo','capucha','shinobi','tabi','gato','cuervo','zorro']},
- pistolero:{n:'Pistolero',vis:['vaquero','cazador','elfo'],kit:['revolver','sombrero'],b:{spd:1,agi:1},shirt:'#b3412e',pants:'#3d5a80',g:['revolver','pistola','derringer','pistolaDuelo','pimienta','rifleCaza','ballesta','arco','arcoElfico','sombrero','guardapolvo','chaps','botasEspuela','perro']},
- elementalista:{n:'Elementalista',vis:['bruja','elfo'],kit:['baculo','sombreroMago'],b:{agi:1},shirt:'#3a2a5a',pants:'#22252b',g:['baculo','varitaFuego','varitaHielo','cetroTormenta','bastonArcano','tomoFuego','tomoHielo','tomoHechizos','sombreroMago','tunicaArcana','levita','cuervo']},
- ocultista:{n:'Ocultista',vis:['bruja','nomuerto','espectro','tiefling'],kit:['baculo','puntiagudo'],b:{agi:1},shirt:'#2b1d2b',pants:'#1d1a1a',g:['baculo','grimorio','tomoNecro','tomoVeneno','varitaVeneno','guadana','cadenas','hojaMaldita','puntiagudo','mortaja','gato','murcielago','serpiente']},
- sanador:{n:'Sanador',vis:['caballero','elfo','nativo'],kit:['bastonClerigo','tomoSagrado'],b:{hp:6},shirt:'#e8e2d0',pants:'#8a7b5a',g:['bastonClerigo','mazaSagrada','espadaBendita','martilloSagrado','lucero','tomoSagrado','aguaBendita','escudo','capuchaElfica','tunicaElfica','aguila']},
- domador:{n:'Domador',vis:['nativo','hombrelobo'],kit:['lanza','perro'],b:{hp:4,spd:1},shirt:'#8b5e34',pants:'#6b4a2b',g:['lanza','tomahawk','arco','totem','cintaPluma','chalecoFlecos','polainas','mocasines','lobo','oso','bisonte','aguila','zorro','jabali']},
- hemomante:{n:'Hemomante',vis:['vampiro','cazadoraSangre'],kit:['daga','levita'],b:{hp:4,agi:1},m:{ls:.06},shirt:'#5a1a1a',pants:'#1d1a1a',g:['daga','garras','guadana','caliz','levita','mortaja','hojaMaldita','murcielago','cuervo']}});
+ asesino:{n:'Asesino',vis:['ninja','mediano','tiefling'],kit:['kunai','capucha','humo'],b:{agi:1,spd:2},shirt:'#22252b',pants:'#22252b',g:['kunai','daga','cuchillo','dagaTramposa','wakizashi','garras','humo','capucha','shinobi','tabi','gato','cuervo','zorro']},
+ pistolero:{n:'Pistolero',vis:['vaquero','cazador','elfo'],kit:['revolver','sombrero'],b:{spd:2,agi:1},shirt:'#b3412e',pants:'#3d5a80',g:['revolver','pistola','derringer','pistolaDuelo','pimienta','rifleCaza','ballesta','arco','arcoElfico','sombrero','guardapolvo','chaps','botasEspuela','perro']},
+ elementalista:{n:'Elementalista',vis:['bruja','elfo'],kit:['baculo','sombreroMago'],b:{agi:1,int:1},shirt:'#3a2a5a',pants:'#22252b',g:['baculo','varitaFuego','varitaHielo','cetroTormenta','bastonArcano','tomoFuego','tomoHielo','tomoHechizos','sombreroMago','tunicaArcana','levita','cuervo']},
+ ocultista:{n:'Ocultista',vis:['bruja','nomuerto','espectro','tiefling'],kit:['baculo','puntiagudo'],b:{agi:1,int:1},shirt:'#2b1d2b',pants:'#1d1a1a',g:['baculo','grimorio','tomoNecro','tomoVeneno','varitaVeneno','guadana','cadenas','hojaMaldita','puntiagudo','mortaja','gato','murcielago','serpiente']},
+ sanador:{n:'Sanador',vis:['caballero','elfo','nativo'],kit:['bastonClerigo','tomoSagrado'],b:{hp:20,int:2},shirt:'#e8e2d0',pants:'#8a7b5a',g:['bastonClerigo','mazaSagrada','espadaBendita','martilloSagrado','lucero','tomoSagrado','aguaBendita','escudo','capuchaElfica','tunicaElfica','aguila']},
+ domador:{n:'Domador',vis:['nativo','hombrelobo'],kit:['lanza','perro'],b:{hp:20,spd:1},shirt:'#8b5e34',pants:'#6b4a2b',g:['lanza','tomahawk','arco','totem','cintaPluma','chalecoFlecos','polainas','mocasines','lobo','oso','bisonte','aguila','zorro','jabali']},
+ hemomante:{n:'Hemomante',vis:['vampiro','cazadoraSangre'],kit:['daga','levita'],b:{hp:30,int:2},m:{ls:.1},shirt:'#5a1a1a',pants:'#1d1a1a',g:['daga','garras','guadana','caliz','levita','mortaja','hojaMaldita','murcielago','cuervo']}});
 [['asesino',['capuchaSombra','trajeAsesino','dagaSombra']],['guardian',['armaduraPlacas','yelmoGuardian','mazaGuardian']],['hemomante',['levitaCarmesi','guadanaSangre','dagaSangre']],['ocultista',['tunicaOcultista','sombreroOcultista']],['elementalista',['tunicaTormenta']],['sanador',['habitoClerigo']],['pistolero',['gabardinaPistolero']],['berserker',['pielesBerserker']],['domador',['capaBestias']]].forEach(([c,L])=>CLS[c].g.push(...L));
 CLS.artillero.vis=['artillero','pirata','enano'];
 ['pirata','samurai','vaquero','vikingo','ninja','caballero','gladiador','nativo','vampiro','cazador','hombrelobo','nomuerto','bruja','espectro','elfo','enano','mediano','semiorco','draconido','tiefling','cazadorNoche','cazadoraSangre','eruditoCosmico','verdugoPlata'].forEach(k=>{if(CLS[k])CLS[k].old=1});
@@ -1034,7 +1053,7 @@ Object.assign(I,{
  sombreroCopa:{c:'h',n:'Sombrero de copa',look:'sombreroCopa',arm:0,hp:5,agi:1,p:50,mods:{crit:.03}},
  capuchaCazador:{c:'h',n:'Capucha de cazador',look:'capucha',tint:'#3a3030',arm:1,hp:4,agi:2,p:40},
  gabardinaCazador:{c:'b',n:'Gabardina de cazador',look:'gabardina',tint:'#3a2f2a',arm:3,hp:10,agi:2,p:80},
- abrigoCazadora:{c:'b',n:'Abrigo carmesí',look:'levita',tint:'#5e0b1a',arm:2,hp:10,agi:2,p:85,mods:{ls:.03}},
+ abrigoCazadora:{c:'b',n:'Abrigo carmesí',look:'levita',tint:'#5e0b1a',arm:2,hp:10,agi:2,p:85,mods:{ls:.03},at:{agi:2,des:1,int:2}},
  abrigoErudito:{c:'b',n:'Túnica del coro',look:'levita',tint:'#e8e2d0',arm:2,hp:9,agi:1,p:85,mods:{crit:.02}},
  pantalonTela:{c:'l',n:'Pantalón de tela',look:'polainas',tint:'#2b2b2e',arm:1,hp:4,agi:1,p:30},
  botasCazador:{c:'bo',n:'Botas de cazador',look:'botasCuero',tint:'#1d1a1a',arm:1,hp:3,agi:2,p:35},
@@ -1106,7 +1125,7 @@ function setHTML(i,n){return`<div class="setb"><b>Set ${SETS[i].n} (${n}/6)</b>$
 Object.keys(I).forEach(k=>{if(I[k].sh)I[k].c='s'});
 const TWOB=new Set(['katana','mandoble','martillo','garrote','lanza','naginata','guadana','baculo','baston','arco','ballesta','trabuco','escopeta','canon','gatling','garras']);
 if(I.granHacha)I.granHacha.two=1;if(I.mjolnir)I.mjolnir.two=0;
-Object.assign(I.pistola,{d:[5,8]});Object.assign(I.revolver,{d:[5,8]});Object.assign(I.trabuco,{d:[8,12]});Object.assign(I.escopeta,{d:[8,12]});Object.assign(I.canon,{d:[11,16]});Object.assign(I.gatling,{d:[4,6]});if(I.ballesta)Object.assign(I.ballesta,{d:[7,11]});if(I.arco)Object.assign(I.arco,{d:[6,10]});if(I.pistolaCazador)I.pistolaCazador.d=[5,8];if(I.pistolaRepetidora)I.pistolaRepetidora.d=[4,7];if(I.trabucoCorto)I.trabucoCorto.d=[6,9];
+[['masamune',{des:'A',sue:'C'}],['poseidon',{fue:'B',des:'C'}],['kitsune',{des:'C',sue:'B'}],['kidd',{des:'C',sue:'B'}],['pistolaCazador',{des:'C',sue:'B'}],['alabarda',{des:'B',fue:'C',req:{fue:9}}],['malabala',{sue:'S',des:'C'}]].forEach(([k,v])=>{if(I[k])I[k].sc=v});Object.assign(I.pistola,{d:[1,10]});Object.assign(I.revolver,{d:[5,12]});Object.assign(I.trabuco,{d:[8,12]});Object.assign(I.escopeta,{d:[8,12]});Object.assign(I.canon,{d:[11,16]});Object.assign(I.gatling,{d:[4,6]});if(I.ballesta)Object.assign(I.ballesta,{d:[7,11]});if(I.arco)Object.assign(I.arco,{d:[6,10]});if(I.pistolaCazador)I.pistolaCazador.d=[5,8];if(I.pistolaRepetidora)I.pistolaRepetidora.d=[4,7];if(I.trabucoCorto)I.trabucoCorto.d=[6,9];
 var GUNM=.8;
 const LVM=it=>it&&it.lv?(.85+Math.min(60,it.lv)*.02):1,RM=it=>RAR[it.r].m*LVM(it),PLV=it=>it&&it.lv?(.7+it.lv*.03):1;
 const canUse=(f,it)=>!it||!it.lv||!f||it.lv<=(f.lvl||1);
@@ -1149,14 +1168,14 @@ Object.assign(CLSAT,{guardian:{vig:2,fue:1},berserker:{fue:3},duelista:{des:2,ag
 /* ===== RAZAS ===== */
 const RACE_CLS=new Set(['elfo','enano','mediano','semiorco','draconido','tiefling']);
 const RACES={
- humano:{n:'Humano',at:{vig:1,sue:1},m:{gold:.1},t:'Versátiles: +1 Vigor, +1 Suerte, +10% oro y siempre tienen sinergia con su clase.'},
- elfo:{n:'Elfo',at:{des:2,agi:1,vig:-1},m:{dodge:.04},skins:CLS.elfo.skins,t:'Ágiles y certeros: +2 Destreza, +1 Agilidad, −1 Vigor, +4% esquiva.'},
+ humano:{n:'Humano',at:{vig:1,sue:1,int:1},m:{gold:.1},t:'Versátiles: +1 Vigor, +1 Suerte, +10% oro y siempre tienen sinergia con su clase.'},
+ elfo:{n:'Elfo',at:{des:2,agi:1,vig:-1},m:{dodge:.1},skins:CLS.elfo.skins,t:'Ágiles y certeros: +2 Destreza, +1 Agilidad, −1 Vigor, +4% esquiva.'},
  enano:{n:'Enano',at:{vig:2,fue:1,agi:-1},m:{arm:2},small:.86,t:'Duros como la roca: +2 Vigor, +1 Fuerza, −1 Agilidad, +2 armadura.'},
- mediano:{n:'Mediano',at:{sue:2,agi:2,fue:-1},m:{dodge:.03,crit:.03},small:.8,t:'Pequeños y afortunados: +2 Suerte, +2 Agilidad, −1 Fuerza, +3% esquiva y crítico.'},
+ mediano:{n:'Mediano',at:{sue:2,agi:2,fue:-1},m:{dodge:.03,crit:.05},small:.8,t:'Pequeños y afortunados: +2 Suerte, +2 Agilidad, −1 Fuerza, +3% esquiva y crítico.'},
  semiorco:{n:'Semiorco',at:{fue:2,vig:1,int:-1},m:{dmg:.04},skins:CLS.semiorco.skins,t:'Fuerza bruta: +2 Fuerza, +1 Vigor, −1 Inteligencia, +4% daño.'},
- orco:{n:'Orco',at:{fue:3,vig:1,int:-1,des:-1},m:{dmg:.07},skins:(CLS.orco&&CLS.orco.skins)||['#5d7a4a','#6b8a3a','#4a6b3a'],t:'Pura furia: +3 Fuerza, +1 Vigor, −1 Inteligencia, −1 Destreza, +7% daño.'},
- draconido:{n:'Dracónido',at:{fue:1,vig:1,int:1},m:{hp:.06},skins:CLS.draconido.skins,t:'Sangre de dragón: +1 Fuerza, +1 Vigor, +1 Inteligencia, +6% vida.'},
- tiefling:{n:'Tiefling',at:{int:2,sue:1,vig:-1},m:{crit:.04},skins:CLS.tiefling.skins,t:'Linaje infernal: +2 Inteligencia, +1 Suerte, −1 Vigor, +4% crítico.'}};
+ orco:{n:'Orco',at:{fue:3,vig:2,int:-1,des:-1},m:{dmg:.07},skins:(CLS.orco&&CLS.orco.skins)||['#5d7a4a','#6b8a3a','#4a6b3a'],t:'Pura furia: +3 Fuerza, +1 Vigor, −1 Inteligencia, −1 Destreza, +7% daño.'},
+ draconido:{n:'Dracónido',at:{vig:2,int:1},m:{hp:.1},skins:CLS.draconido.skins,t:'Sangre de dragón: +1 Fuerza, +1 Vigor, +1 Inteligencia, +6% vida.'},
+ tiefling:{n:'Tiefling',at:{int:3,sue:1,vig:-1},m:{crit:.1},skins:CLS.tiefling.skins,t:'Linaje infernal: +2 Inteligencia, +1 Suerte, −1 Vigor, +4% crítico.'}};
 Object.assign(CLS.elfo,{n:'Explorador'});Object.assign(CLS.enano,{n:'Guerrero rúnico'});Object.assign(CLS.mediano,{n:'Pícaro'});Object.assign(CLS.semiorco,{n:'Bárbaro'});Object.assign(CLS.draconido,{n:'Juramentado'});Object.assign(CLS.tiefling,{n:'Brujo'});
 RACE_CLS.forEach(k=>{delete CLS[k].skins;delete CLS[k].small});
 Object.assign(CLSAT,{enano:{fue:2,vig:1},mediano:{sue:2,agi:1},semiorco:{fue:3},tiefling:{int:3}});
@@ -1164,7 +1183,7 @@ const raceKey=L=>L&&L.race?L.race:L?L.cls:null,raceN=f=>f&&f.race&&RACES[f.race]
 const ATN2={vig:'Vigor',fue:'Fuerza',des:'Destreza',agi:'Agilidad',int:'Inteligencia',sue:'Suerte'};
 function synergy(race,cls){const R=RACES[race];if(!R)return[];const c=CLSAT[cls]||{},sh=Object.keys(R.at).filter(k=>R.at[k]>0&&(c[k]||0)>0);if(race==='humano'&&!sh.length){const top=Object.keys(c).sort((a,b)=>c[b]-c[a])[0];return top?[top]:[]}return sh.slice(0,2)}
 let KIT_RACE=null;
-function baseAt(f){const r=rng((f.seed||1)+7),a={vig:5,fue:4,des:4,agi:4,int:3,sue:3},b=CLSAT[f.cls]||{};for(const k in b)a[k]+=b[k];const B=CLS[f.cls].b||{};if(B.str)a.fue+=B.str;if(B.agi)a.agi+=B.agi;if(B.spd)a.des+=B.spd;if(B.hp)a.vig+=Math.round(B.hp/4);
+function baseAt(f){const r=rng((f.seed||1)+7),a={vig:5,fue:4,des:4,agi:4,int:3,sue:3},b=CLSAT[f.cls]||{};for(const k in b)a[k]+=b[k];const B=CLS[f.cls].b||{};if(B.str)a.fue+=B.str;if(B.agi)a.agi+=B.agi;if(B.spd)a.des+=B.spd;if(B.hp)a.vig+=Math.round(B.hp/4);if(B.int)a.int+=B.int;
  for(let i=0;i<6;i++){const k=pk(r,['vig','fue','des','agi','int','sue']);a[k]++}for(const k in a)a[k]=Math.max(1,a[k]);return a}
 function autoAlloc(f,n){const b=CLSAT[f.cls]||{},w=ATR.map(([k])=>Math.max(.5,1+(b[k]||0)*1.2+(k==='vig'?1:0)));for(let i=0;i<n;i++){let x=Math.random()*w.reduce((a,c)=>a+c,0),j=0;while((x-=w[j])>0&&j<5)j++;f.at[ATR[j][0]]++}}
 const isMine=f=>typeof me!=='undefined'&&me&&me.team&&me.team.includes(f);
@@ -1177,8 +1196,8 @@ function itemAt(k){if(ATCACHE[k])return ATCACHE[k];const d=I[k],o={};if(d.at)Obj
  if((d.agi||0)>0){o.agi=d.agi;if(d.agi>=2)o.des=1}else if((d.arm||0)>=5){o.vig=1;o.fue=1}else if((d.arm||0)>=3)o.vig=1;
  if(/pipa|campe|corona|faja|charret|pluma|herm|suerte/.test(nm))o.sue=(o.sue||0)+1;if(d.c==='t'&&!Object.keys(o).length)o.sue=1;if(d.emb)for(const x in o)o[x]+=2}
  return ATCACHE[k]=o}
-const TOOLAT={red:['des','agi'],humo:['agi','sue'],ron:['vig','fue'],dinamita:['fue','des'],abanico:['agi','des'],cuerno:['fue','vig'],aguaBendita:['int','vig'],caliz:['int','sue'],grimorio:['int','sue'],grial:['vig','int'],gjallar:['fue','vig'],totem:['int','vig'],tomoHechizos:['int','des'],pipaMediano:['sue','vig'],tomoFuego:['int','fue'],tomoHielo:['int','vig'],tomoVeneno:['int','des'],tomoSagrado:['int','vig'],tomoNecro:['int','sue'],tomoArchimago:['int','des'],vialSangre:['vig','fue']};
-const TOOLM={red:{acc:.05},humo:{dodge:.04},ron:{hp:.05},dinamita:{dmg:.04},abanico:{dodge:.03,combo:.03},cuerno:{dmg:.03,hp:.03},aguaBendita:{hp:.04},caliz:{ls:.03},grimorio:{crit:.03},grial:{hp:.08},gjallar:{dmg:.06},totem:{pet:.1},tomoHechizos:{crit:.02},pipaMediano:{gold:.1},tomoFuego:{dmg:.03},tomoHielo:{arm:1},tomoVeneno:{poisonHit:.05},tomoSagrado:{hp:.05},tomoNecro:{ls:.03},tomoArchimago:{crit:.04},vialSangre:{ls:.04}};
+const TOOLAT={red:['des','agi'],humo:['agi','sue'],ron:['vig','fue'],dinamita:['fue','des'],abanico:['agi','des'],cuerno:['fue','vig'],aguaBendita:['int','vig'],caliz:['int','sue'],grimorio:['int','sue'],grial:['vig','int'],gjallar:['fue','vig'],totem:['int','vig'],tomoHechizos:['int','des'],pipaMediano:['sue','des'],tomoFuego:['int','fue'],tomoHielo:['int','vig'],tomoVeneno:['int','des'],tomoSagrado:['int','vig'],tomoNecro:['int','sue'],tomoArchimago:['int','des'],vialSangre:['vig','fue']};
+const TOOLM={red:{acc:.05},humo:{dodge:.04},ron:{hp:.05},dinamita:{dmg:.04},abanico:{dodge:.03,combo:.03},cuerno:{dmg:.03,hp:.03},aguaBendita:{hp:.04},caliz:{ls:.03},grimorio:{crit:.03},grial:{hp:.08},gjallar:{dmg:.06},totem:{pet:.25},tomoHechizos:{crit:.02},pipaMediano:{gold:.1},tomoFuego:{dmg:.05},tomoHielo:{arm:2},tomoVeneno:{poisonHit:.05},tomoSagrado:{hp:.1},tomoNecro:{ls:.05},tomoArchimago:{crit:.04},vialSangre:{ls:.04}};
 function toolAt(it){const A=TOOLAT[it.k]||TOOLAT[I[it.k].look],o={};if(!A)return itemAt(it.k);const r=Math.min(4,it.r||0),mn=[0,1,2,3,3][r],sc=[0,0,1,2,2][r];if(mn)o[A[0]]=mn;if(sc)o[A[1]]=(o[A[1]]||0)+sc;return o}
 function toolMods(it){const M=TOOLM[it.k]||TOOLM[I[it.k].look];if(!M||(it.r||0)<2)return null;const k=(it.r||0)>=3?1.5:1,o={};for(const x in M)o[x]=M[x]*k;return o}
 const HYB=new Set(['espadaElfica','martilloGuerra','mjolnir','excalibur','hojaluna','espadaLunar','espadaBendita','mazaSagrada','martilloSagrado','lucero','martilloBrasas','hachaHielo','kitsune','cadenas','guadana','bastonClerigo','espadaRunica','hojaMaldita','hachaBrujo']);
@@ -1198,10 +1217,11 @@ function derive(f){if(!f||!CLS[f.cls])return f;if(!f.race&&!CLS[f.cls].npc&&!CLS
  f.hp=Math.round(30+5*e('vig')+2*(f.lvl||1))+(bon.hp||0);f._int=e('int');f._sue=e('sue');f._des=e('des');f._fue=e('fue');f._vig=e('vig');f._over=over;return f}
 /* escalado de armas */
 const LET={S:.9,A:.7,B:.5,C:.35,D:.2,E:.1};
-const WSC={espada:{fue:'C',des:'C'},katana:{des:'A',sue:'C'},estoque:{des:'A',sue:'C'},alfanje:{des:'B',fue:'D'},cuchillo:{des:'D',sue:'A'},kunai:{des:'C',sue:'B'},mandoble:{fue:'A',des:'E',req:{fue:16}},
- hacha:{fue:'B',des:'D',req:{fue:10}},tomahawk:{fue:'C',des:'C'},martillo:{fue:'A',req:{fue:12}},garrote:{fue:'B',req:{fue:8}},lanza:{fue:'C',des:'C'},naginata:{des:'B',fue:'C',req:{fue:9}},tridente:{fue:'B',des:'C'},guadana:{fue:'B',int:'C',req:{fue:10}},
- baculo:{int:'S'},baston:{fue:'C',int:'C'},garras:{fue:'B',des:'B'},lazo:{des:'B'},cadenas:{des:'B',int:'D'},arco:{des:'A',req:{des:10}},ballesta:{des:'B'},
- pistola:{des:'C',sue:'B'},mosquete:{des:'B',fue:'D'},rifleCaza:{des:'A'},derringer:{sue:'A'},pimienta:{des:'B',sue:'C'},pistolaDuelo:{des:'A'},arcabuz:{fue:'C',des:'C'},morteroMano:{fue:'B'},revolver:{sue:'A',des:'D'},trabuco:{fue:'C',sue:'C'},escopeta:{fue:'C',sue:'C',req:{fue:10}},canon:{fue:'B',int:'D',req:{fue:14}},gatling:{des:'B',fue:'D',req:{fue:14}}};
+for(const k in I){const d=I[k];if(d.c==='p'&&!d._bf){d._bf=1;if(d.hp)d.hp=Math.round(d.hp*1.3);if(d.d)d.d=d.d.map(x=>Math.max(1,Math.round(x*1.2)))}}
+const WSC={malabala:{sue:'S',des:'C'},espada:{fue:'C',des:'C'},katana:{des:'A',sue:'B'},estoque:{des:'A',sue:'C'},alfanje:{des:'B',fue:'D'},cuchillo:{des:'D',sue:'A'},kunai:{des:'B',sue:'B'},mandoble:{fue:'A',des:'E',req:{fue:16}},
+ hacha:{fue:'B',des:'D',req:{fue:10}},tomahawk:{fue:'C',des:'C'},martillo:{fue:'A',req:{fue:12}},garrote:{fue:'B',req:{fue:8}},lanza:{fue:'C',des:'C'},naginata:{des:'B',fue:'C',req:{fue:6}},tridente:{fue:'B',des:'B'},guadana:{fue:'B',int:'C',req:{fue:10}},
+ baculo:{int:'S'},baston:{fue:'C',int:'C'},garras:{fue:'B',des:'B'},lazo:{des:'S'},cadenas:{des:'B',int:'D'},arco:{des:'A',req:{des:10}},ballesta:{des:'B'},
+ pistola:{des:'C',sue:'C'},mosquete:{des:'B',fue:'D'},rifleCaza:{des:'A'},derringer:{sue:'A'},pimienta:{des:'B',sue:'C'},pistolaDuelo:{des:'A'},arcabuz:{fue:'C',des:'C'},morteroMano:{fue:'B'},revolver:{sue:'A',des:'D'},trabuco:{fue:'C',sue:'C'},escopeta:{fue:'C',sue:'C',req:{fue:10}},canon:{fue:'B',int:'D',req:{fue:14}},gatling:{des:'B',fue:'D',req:{fue:14}}};
 function wscOf(k){const d=I[k];if(d.nat)return{fue:'B'};const s={...(d.sc||WSC[d.base||k]||{fue:'C',des:'C'})};if(k==='bastonArcano'||k==='bastonArchimago')s.int='S';if(k==='sarten')s.sue='A';if(k==='granHacha'){s.fue='A';s.req={fue:14}}if(k==='hachaEnana')s.req={fue:8};return s}
 function upLet(L,n){const o='EDCBAS';return o[Math.min(5,o.indexOf(L)+n)]}
 function wMult(f,it){const s=wscOf(it.k),bump=it.r>=3?1:0;let m=1;for(const k of ['vig','fue','des','agi','int','sue'])if(s[k])m+=LET[upLet(s[k],bump)]*effA(atTot(f,k))*.035;let ok=true;if(s.req)for(const k in s.req)if(atTot(f,k)<s.req[k])ok=false;return{m:ok?m:m*.6,ok,acc:ok?0:-.15}}
@@ -3118,13 +3138,13 @@ function renderRaces(){let el=$('#races');if(!el){el=document.createElement('div
  el.innerHTML=Object.keys(RACES).map(k=>{const R=RACES[k],sy=synergy(k,selCls);return`<button class="rcb${k===draft.race?' on':''}" data-race="${k}"><b>${R.n}${sy.length?' <span class="syn">★ sinergia</span>':''}</b><small>${R.t}</small></button>`}).join('');
  el.querySelectorAll('[data-race]').forEach(b=>b.onclick=()=>{draft.race=b.dataset.race;KIT_RACE=draft.race;renderRaces();classCards($('#classes'),inName.value.trim(),preview,draft.sex);preview()})}
 function preview(){KIT_RACE=draft.race||'humano';if($('#races'))renderRaces();
- const n=inName.value.trim()||CLS[selCls].n,f=kitF(n,selCls,draft.sex),c=fit($('#cvPrev'),400,210);f.lk=draft.lk;c.clearRect(0,0,400,210);
+ const n=inName.value.trim()||CLS[selCls].n,f=kitF(n,selCls,draft.sex),c=fit($('#cvPrev'),400,210);f.lk=draft.lk;const VV=CLS[selCls].vis||[];if(!VV.includes(draft.vis))draft.vis=VV[0]||null;if(draft.vis)f.vis=draft.vis;$('#cVis').innerHTML=VV.length>1?'<b style="margin-right:6px">Estilo:</b>'+VV.map(v=>`<button class="chip${v===draft.vis?' on':''}" data-cv="${v}">${CLS[v]?CLS[v].n:v}</button>`).join(''):'';$('#cVis').querySelectorAll('[data-cv]').forEach(b=>b.onclick=()=>{draft.vis=b.dataset.cv;preview()});c.clearRect(0,0,400,210);
  drawF(c,lookOf(f),190,196,1,{sc:1.6,w:f.eq.w[0].k});
  const T=totals(f),SY=synergy(draft.race||'humano',selCls);$('#prevTxt').textContent=inName.value.trim()?`${RACES[draft.race||'humano'].n} ${CLS[selCls].n.toLowerCase()}${SY.length?' · Sinergia: '+SY.map(k=>ATN2[k]).join(' y ')+' (+'+4*SY.length+'% daño)':''} · Vida ${T.mhp} · Fuerza ${f.str} · Agilidad ${T.agi} · Velocidad ${f.spd}`:'El nombre decide su cara y sus atributos. La clase decide su equipo inicial.'}
 function createScreen(){screen('sCreate');draft.race=draft.race||'humano';KIT_RACE=draft.race;renderRaces();(function upd(){$('#sexC').innerHTML=sexSeg('sxc',draft.sex);$('#sxc').querySelectorAll('button').forEach(b=>b.onclick=()=>{draft.sex=b.dataset.s;upd();classCards($('#classes'),inName.value.trim(),preview,draft.sex);preview()})})();classCards($('#classes'),inName.value.trim(),preview,draft.sex);lookEditor($('#lkCreate'),()=>({seed:hash((inName.value.trim()||CLS[selCls].n).toLowerCase()),lk:draft.lk}),preview);preview()}
 inName.addEventListener('input',()=>{preview();clearTimeout(inName._t);inName._t=setTimeout(()=>classCards($('#classes'),inName.value.trim(),preview),300)});
 $('#btBack').addEventListener('click',titleScreen);
-$('#btCreate').addEventListener('click',()=>{const n=inName.value.trim();if(!n){inName.focus();return}me=newGame(n,selCls,draft.sex);me.team[0].lk={...draft.lk};me.team[0].race=draft.race||'humano';KIT_RACE=null;derive(me.team[0]);save();rivals=[];rivals3=[];tab='plantel';home()});
+$('#btCreate').addEventListener('click',()=>{const n=inName.value.trim();if(!n){inName.focus();return}me=newGame(n,selCls,draft.sex);me.team[0].lk={...draft.lk};me.team[0].race=draft.race||'humano';if(draft.vis)me.team[0].vis=draft.vis;KIT_RACE=null;derive(me.team[0]);save();rivals=[];rivals3=[];tab='plantel';home()});
 
 /* home */
 function home(){screen('sHome');hdr();showTab(tab);setTimeout(gameOverCheck,400)}
@@ -3456,12 +3476,12 @@ function drawStage(c,t,H,LKs){c.fillStyle='#1d1210';c.fillRect(0,0,400,230);
  c.fillStyle='#6b4a2b';c.fillRect(0,182,400,48);c.fillStyle='#8b5e34';c.fillRect(0,182,400,6);c.fillStyle='rgba(0,0,0,.25)';for(let x=0;x<400;x+=34)c.fillRect(x,188,2,42);
  const cw=Math.sin(t*1.3)*3;[[0,1],[400,-1]].forEach(([x0,d])=>{c.fillStyle='#7a1c1c';c.beginPath();c.moveTo(x0,0);c.lineTo(x0+d*58,0);c.quadraticCurveTo(x0+d*(30+cw),110,x0+d*44,190);c.lineTo(x0,190);c.fill();c.fillStyle='#5a1212';for(let k=1;k<4;k++){c.fillRect(x0+d*k*13-1,0,2,185)}});
  c.fillStyle='#5a1a1a';c.fillRect(0,0,400,16);for(let x=0;x<400;x+=28){c.fillStyle='#8a2a2a';c.beginPath();c.moveTo(x,16);c.quadraticCurveTo(x+14,34,x+28,16);c.fill()}c.fillStyle='#c9a227';c.fillRect(0,14,400,3);
- c.fillStyle='#ffd23f';c.font='bold 15px sans-serif';c.textAlign='center';c.fillText('⭐ SUBASTA DE LEYENDAS ⭐',200,44);
+ c.textAlign='center';
  [100,200,300].forEach((bx,i)=>{const f=H[i],L=LKs[i];if(!f||!L){c.fillStyle='rgba(255,255,255,.35)';c.font='12px sans-serif';c.fillText('Vendido',bx,170);return}
   const ph=(t*.33+i*.37)%1,mv=Math.sin(t*.9+i*2),x=bx+mv*26,face=Math.cos(t*.9+i*2)>0?1:-1,atk=ph<.18,sw=atk?1-ph/.18:0,walking=!atk&&Math.abs(Math.cos(t*.9+i*2))>.3;
   drawF(c,L,x,184,atk?(i===2?-1:1):face,{sc:.78,w:f.eq.w[0]&&f.eq.w[0].k,t,swing:sw,an:walking?Math.floor(t*9)%4+1:0,atkN:Math.floor(t*.33+i*.37)});
   if(atk&&sw>.6){c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=2;c.beginPath();c.arc(x+(i===2?-14:14),150,22,-1.2,.6);c.stroke()}
-  const nm=f.name.length>18?f.name.slice(0,17)+'…':f.name;c.font='bold 11px sans-serif';const w=c.measureText(nm).width+10;c.fillStyle='rgba(0,0,0,.6)';c.fillRect(bx-w/2,206,w,16);c.fillStyle='#ffd23f';c.fillText(nm,bx,218)})}
+  })}
 const LSAY=['Espero este mes ganar mejores comisiones','Ojalá aumenten las comisiones por decapitación','¿El bono por KO es antes o después de impuestos?','Me descontaron el día por quedar inconsciente','Recursos Humanos no cubre las amputaciones','Mi meta del mes: 30 cabezas','El de contabilidad me debe dos peleas','Pedí reajuste por riesgo de muerte y me dieron una poción','Dicen que ascienden al que sobrevive al jefe','Otra reunión que pudo ser un duelo','Si me muero, ¿me pagan el finiquito?','La evaluación de desempeño es a muerte, literal','¿Las horas en la mazmorra cuentan como extra?','Cobro comisión por cada sangrado','Este mes me toca turno de noche en la cripta','Quiero teletrabajo: pelear desde casa','Me ofrecieron capacitación en apuñalar por la espalda','El seguro no cubre mordidas de dragón','Firmé contrato indefinido… de vida o muerte','Con la inflación, el oro de botín ya no alcanza','¿Cuándo pagan?','Qué buen café…','Ojalá este mes me suban el sueldo','Otro lunes de golpes…','¿Alguien vio mi casco?','El jefe dice que hoy toca 3 contra 3','Pedí vacaciones y me mandaron a la mazmorra','¿Hay seguro de salud por las heridas?','Necesito un aumento de oro','Ayer me desangraron, ni horas extra me pagaron','¿Quién se comió mi almuerzo?','Tranquilo, hoy es día de reclutamiento','Deberíamos formar un sindicato de luchadores','Mi contrato dice "riesgo moderado"…','Cinco minutos más y vuelvo a la arena','El café de la mazmorra es mejor','Me dijeron que el dragón paga bien'];
 let LB=null,LTV=[];
 function drawLounge(c,t,L){c.fillStyle='#d9cdb8';c.fillRect(0,0,400,200);c.fillStyle='#c9bca4';for(let x=0;x<400;x+=40)c.fillRect(x,0,1.5,150);c.fillStyle='#8a6a4a';c.fillRect(0,150,400,50);c.fillStyle='rgba(0,0,0,.12)';for(let x=0;x<400;x+=50)c.fillRect(x,150,2,50);
@@ -3586,7 +3606,7 @@ function battle(TA,TB){
   return res}
  const STMAP={Congelado:'frozen','Tumba helada':'frozen',Ventisca:'frozen',Electrocutado:'shock',Asustado:'fear',Aterrado:'fear',Quemado:'burn',Maldito:'curse','Desesperación':'curse',Locura:'disor',Sangrando:'bleed',Desangrado:'bleed','¡Parada!':'disarm',Desarmado:'disarm',Embrujado:'hex',Desorientado:'disor'};
  const STN={stun:['Aturdido','#ffe08a'],poison:['Envenenado','#7bd389'],blind:['Cegado','#d0d4d8'],frozen:['Congelado','#9fe3ff'],shock:['Electrocutado','#ffe14a'],fear:['Asustado','#e8c26a'],burn:['Quemado','#ff8a3d'],curse:['Maldito','#b28dff'],disor:['Desorientado','#ffb3e6'],disarm:['Desarmado','#d0d4d8'],hex:['Embrujado','#c08bff'],bleed:['Desangrado','#d6303a']};
- const STDUR={bleed:4,frozen:3,shock:3,fear:3,burn:3,curse:4,disor:3,disarm:4,hex:2};
+ const STDUR={bleed:4,frozen:5,shock:3,fear:3,burn:3,curse:4,disor:3,disarm:4,hex:5};
  const status=(d,key,v,txt,col)=>{if(!d||!d.alive)return;if(STMAP[txt])key=STMAP[txt];const nm=STN[key];if(nm){txt=nm[0];col=nm[1]}
   if(d.st.msh>0){ev.push({k:'status',d:d.id,txt:'¡Inmune!',col:'#9fd4ff'});return}
   if(Math.random()>(stunCh<1?stunCh:.8)){ev.push({k:'status',d:d.id,txt:'¡Resiste!',col:'#d0d4d8'});return}
@@ -3613,9 +3633,9 @@ function battle(TA,TB){
   iai:(F,a)=>{useW(F,a.it);strike(F,mainFoe(F),{crit:true,acc:.2});home(F)},
   estocada:(F,a)=>{useW(F,a.it);strike(F,mainFoe(F),{pierce:true,noBlock:true,mult:1.2});home(F)},
   rafaga:(F,a,m)=>{useW(F,a.it);const tg=mainFoe(F);for(let i=0;i<3&&tg&&tg.alive&&!bt.over;i++)shot(F,tg,[6*m,9*m],{acc:.85,str:.2,pierce:1,w:a.it.k})},
-  lazo:(F,a)=>{useW(F,a.it);const tg=mainFoe(F);if(shot(F,tg,[2,3],{acc:.88,pr:'lazo'})==='hit'&&tg.alive){status(tg,'stun',1,'¡Atrapado!','#ffe08a');if(tg.kind==='f'&&tg.w){status(tg,'disarm',1,'Desarmado')}}},
+  lazo:(F,a)=>{useW(F,a.it);const tg=mainFoe(F);if(shot(F,tg,[5,10],{acc:.88,pr:'lazo'})==='hit'&&tg.alive){status(tg,'stun',1,'¡Atrapado!','#ffe08a');if(tg.kind==='f'&&tg.w){status(tg,'disarm',3,'Desarmado')}}},
   tajo:(F,a)=>{useW(F,a.it);strike(F,mainFoe(F),{mult:1.8});home(F)},
-  aturdir:(F,a)=>{useW(F,a.it);const tg=mainFoe(F);if(strike(F,tg,{mult:1.1})==='hit'&&tg.alive)status(tg,'stun',1,'Aturdido','#ffe08a');home(F)},
+  aturdir:(F,a)=>{useW(F,a.it);const tg=mainFoe(F);if(strike(F,tg,{mult:1.5})==='hit'&&tg.alive)status(tg,'stun',1,'Aturdido','#ffe08a');home(F)},
   shuriken:(F,a,m)=>{for(let i=0;i<3&&!bt.over;i++)shot(F,mainFoe(F),[3*m,5*m],{acc:.82,pr:'shuriken'})},
   red:F=>{const tg=mainFoe(F);if(shot(F,tg,[1,2],{acc:.85,pr:'red'})==='hit'&&tg.alive)status(tg,'stun',2,'¡Enredado!','#ffe08a')},
   humo:F=>{F.st.smoke=3;buff(F,'Cortina de humo','#d0d4d8');ev.push({k:'puff',a:F.id})},
@@ -3632,7 +3652,7 @@ function battle(TA,TB){
   fuego:(F,a,m)=>area(F.pet,10,15,m,true),
   alma:(F,a)=>{useW(F,a.it);const d=hitD(()=>strike(F,mainFoe(F),{crit:true,pierce:true,noMiss:true}));if(d)healF(F,Math.round(d*.3),'absorbe el alma');home(F)},
   seisbalas:(F,a)=>{useW(F,a.it);for(let i=0;i<6&&!bt.over;i++){const tg=mainFoe(F);if(shot(F,tg,[5,8],{acc:.85,str:.2,pierce:1,w:a.it.k})==='hit'&&tg.alive&&Math.random()<.15)status(tg,'stun',1,'Aturdido','#ffe08a')}},
-  avalon:(F,a)=>{useW(F,a.it);strike(F,mainFoe(F),{mult:1.5,noMiss:true});home(F);S[F.side].filter(x=>x.alive).forEach(x=>healF(x,Math.round(x.mhp*.15),'recibe la luz de Avalón'))},
+  avalon:(F,a)=>{useW(F,a.it);strike(F,mainFoe(F),{mult:2,noMiss:true});home(F);S[F.side].filter(x=>x.alive).forEach(x=>healF(x,Math.round(x.mhp*.2),'recibe la luz de Avalón'))},
   campeador:(F,a)=>{useW(F,a.it);const tg=mainFoe(F);for(let i=0;i<3&&tg&&tg.alive&&!bt.over;i++)strike(F,tg,{noBlock:true,mult:.9});home(F)},
   odin:(F,a)=>{useW(F,a.it);strike(F,mainFoe(F),{noMiss:true,noBlock:true,pierce:true,crit:true});home(F)},
   trueno:(F,a)=>{useW(F,a.it);area(F,12,18,1,false,'trueno');foes(F.side).forEach(d=>status(d,'stun',1,'Electrocutado','#7ad7ff'))},
@@ -3687,7 +3707,7 @@ function battle(TA,TB){
   lanzarHacha:(F,a,m)=>{useW(F,a.it);shot(F,mainFoe(F),[9*m,14*m],{acc:.92,str:.35,pierce:1,pr:'hacha'})},
   lluviaFlechas:(F,a,m)=>{useW(F,a.it);for(let i=0;i<5&&!bt.over;i++)shot(F,pick(foes(F.side)),[4*m,7*m],{acc:.85,str:.2,pr:'flecha',w:a.it.k})},
   golpeContado:(F,a)=>{useW(F,a.it);const tg=mainFoe(F);if(strike(F,tg,{noBlock:true,noMiss:true,mult:1.2})==='hit'&&tg.alive)status(tg,'stun',1,'Aturdido','#ffe08a');home(F)},
-  espiritu:F=>{healF(F,Math.round(F.mhp*.2),'invoca al espíritu');S[F.side].filter(x=>x.alive).forEach(x=>{x.st.rage=Math.max(x.st.rage||0,3)})},
+  espiritu:F=>{healF(F,Math.round(F.mhp*.3),'invoca al espíritu');S[F.side].filter(x=>x.alive).forEach(x=>{x.st.rage=Math.max(x.st.rage||0,3)})},
   embestida:F=>{const tg=mainFoe(F);if(strike(F.pet,tg,{mult:2})==='hit'&&tg.alive)status(tg,'stun',1,'Aturdido','#ffe08a');home(F.pet)},
   espiritus:F=>{S[F.side].filter(x=>x.alive).forEach(x=>healF(x,Math.round(x.mhp*.25),'siente a los espíritus'));foes(F.side).forEach(d=>status(d,'blind',2,'Cegado','#b6f5c1'))},
   estampida:F=>{area(F,10,15,1,false,'oscuro');foes(F.side).forEach(d=>status(d,'stun',1,'Arrollado','#ffe08a'))},
@@ -3800,7 +3820,7 @@ function battle(TA,TB){
   else if(p.ty==='equipo'){S[F.side].filter(x=>x.alive).forEach(x=>{if(p.rage)x.st.rage=Math.max(x.st.rage||0,p.rage);if(p.wall)x.st.wall=(x.st.wall||0)+p.wall;if(p.heal)healF(x,Math.round(x.mhp*p.heal),AB[k].n.toLowerCase())});if(!p.heal)buff(F,AB[k].n,'#ffd23f')}
   else if(p.ty==='robo'){const d=hitD(()=>strike(F,tg,{mult:p.m}));if(d)healF(F,Math.round(d*p.ls),'roba vida');home(F)}}}
  const smart=(F,a)=>/transfusion|pactoSangre|curar/.test(a.ab)?S[F.side].some(x=>x.alive&&x.hp<x.mhp*.65)&&F.hp>F.mhp*.25:/lanzaSangre|tormentaSangre/.test(a.ab)?F.hp>F.mhp*.3:a.ab==='provocar'?!(F.st.taunt>0)&&F.hp>F.mhp*.3:/ron|luz|valhalla/.test(a.ab)?S[F.side].some(x=>x.alive&&x.hp<x.mhp*.55):/muro|parada/.test(a.ab)?!(F.st.wall>0):a.ab==='humo'?!(F.st.smoke>0):/kiai|aullido/.test(a.ab)?!(F.st.rage>0):true;
- bt.canCast=(s,i)=>{const x=bt.abil[s][i];if(!x)return false;const{F,a}=x;return !bt.over&&F.alive&&!(F.st.stun>0)&&!(F.st.hex>0)&&(a.ab!=='berserk'||F.hp<F.mhp*.1)&&a.cur===0&&(!a.pet||F.pet.alive)};
+ bt.canCast=(s,i)=>{const x=bt.abil[s][i];if(!x)return false;const{F,a}=x;return !bt.over&&F.alive&&!(F.st.stun>0)&&!(F.st.hex>0)&&(a.ab!=='berserk'||F.hp<F.mhp*.25)&&a.cur===0&&(!a.pet||F.pet.alive)};
  bt.cast=(s,i)=>{ev=[];if(!bt.canCast(s,i))return ev;const{F,a}=bt.abil[s][i];a.cur=a.cd;ev.push({k:'ab',a:a.pet?F.pet.id:F.id,txt:AB[a.ab].n,side:s,ab:a.ab});abM=1+(F.f?(a.path&&CLSMAIN[F.f.cls]?attrOf(F.f,CLSMAIN[F.f.cls]):(F.f._int||0)):0)*.025;{const src=a.it||a.tome;stunCh=a.path?Math.min(.7,.4+((F.f&&F.f.lvl)||1)*.01):src?[.45,.55,.65,.75,.85][Math.min(4,src.r||0)]:1}ACT=a.pet?F.pet:F;if(a.it&&I[a.it.k].emb)ev.push({k:'embfx',a:F.id,col:I[a.it.k].emb,ab:a.ab,emb:1});MAGIC=!!(a.tome||(a.it&&I[a.it.k].rng==='magia')||MAGRX.test(a.ab+' '+((AB[a.ab]&&AB[a.ab].n)||'')));EFF[a.ab](F,a,(a.it||a.tome)?RM(a.it||a.tome):1);if(DISOR.has(a.ab))foes(F.side).forEach(d=>{if(Math.random()<.4)status(d,'disor',1,'Desorientado')});abM=1;stunCh=1;MAGIC=false;if(F.alive&&F.st.bleed>0){const d=Math.max(2,Math.round(F.mhp*.05));F.hp=Math.max(0,F.hp-d);ev.push({k:'dot',a:F.id,dmg:d,hp:F.hp,txt:'🩸'});after(F)}check();return ev};
  bt.ai=(s,p)=>{const ok=bt.abil[s].map((x,i)=>i).filter(i=>bt.canCast(s,i)&&smart(bt.abil[s][i].F,bt.abil[s][i].a));return ok.length&&Math.random()<p?bt.cast(s,pick(ok)):[]};
  bt.step=()=>{
@@ -4436,11 +4456,11 @@ function stModal(){modal(`<div class="big">Estados alterados</div><p class="hint
 <div style="border-left:4px solid #9b8cff;padding:6px 10px;margin:8px 0;background:rgba(255,255,255,.04);border-radius:6px"><b>Tipos de daño</b><div style="font-size:13px">Físico: lo reduce la Armadura. Mágico (hechizos, báculos, varitas): lo reduce la Res. mágica. Híbrido: mitad y mitad. Armaduras pesadas dan mucha Armadura, las de cuero son equilibradas y las mágicas dan mucha Res. mágica.</div></div><button class="wide ghost" id="btCl">Cerrar</button>`);$('#btCl').onclick=close}
 function optModal(){const row=(lab,id,val)=>`<div class="optrow"><span>${lab}</span><button class="sm ${val?'alt':'ghost'}" id="${id}">${val?'Sí':'No'}</button></div>`;
  const mus=OPT.snd!==false&&OPT.snd!=='fx',fx=OPT.snd!==false;
- modal(`<h2 style="text-align:center;font-size:30px">Opciones</h2><p></p>${row('Efectos de sonido','oFx',fx)}${row('Música (menús y combates)','oMus',mus)}${row('Voces de luchadores y público','oVoz',OPT.voz!==false)}${row('Sangre','oGore',OPT.gore!==false)}<div class="optrow"><span>Estilo de personajes</span><button class="sm alt" id="oArt">${OPT.oldArt?'Pixel clásico':OPT.art==='px'?'Pixel HD':'Low poly'}</button></div>${row('Combate automático en 1 contra 1','oAuto',!!(me&&me.auto))}${OPT.ngp?`<p class="hint" style="margin:10px 0 4px"><b>Desafíos de Juego+</b> (cada uno da +25% de oro y botín)</p>${row('Enemigos con +50% de vida','oMh',!!OPT.mHp)}${row('Jefes con una fase extra (más fuertes)','oMb',!!OPT.mBoss)}${row('Mazmorras sin fuentes','oMf',!!OPT.mNoF)}`:''}<button class="wide ghost" id="oSt">Guía de estados y tipos de daño</button><p class="hint">Las voces usan las del navegador; en Edge y Chrome suenan más naturales.</p><button class="wide" id="btCl">Listo</button>`);$('#oSt').onclick=stModal;
+ modal(`<h2 style="text-align:center;font-size:30px">Opciones</h2><p></p>${row('Efectos de sonido','oFx',fx)}${row('Música (menús y combates)','oMus',mus)}${row('Voces de luchadores y público','oVoz',OPT.voz!==false)}${row('Sangre','oGore',OPT.gore!==false)}${row('Combate automático en 1 contra 1','oAuto',!!(me&&me.auto))}${OPT.ngp?`<p class="hint" style="margin:10px 0 4px"><b>Desafíos de Juego+</b> (cada uno da +25% de oro y botín)</p>${row('Enemigos con +50% de vida','oMh',!!OPT.mHp)}${row('Jefes con una fase extra (más fuertes)','oMb',!!OPT.mBoss)}${row('Mazmorras sin fuentes','oMf',!!OPT.mNoF)}`:''}<button class="wide ghost" id="oSt">Guía de estados y tipos de daño</button><p class="hint">Las voces usan las del navegador; en Edge y Chrome suenan más naturales.</p><button class="wide" id="btCl">Listo</button>`);$('#oSt').onclick=stModal;
  $('#oFx').onclick=()=>{OPT.snd=fx?false:true;saveOpt();optModal()};
  $('#oMus').onclick=()=>{OPT.snd=!fx?true:mus?'fx':true;saveOpt();optModal()};
  $('#oVoz').onclick=()=>{OPT.voz=OPT.voz===false;saveOpt();optModal()};
- $('#oGore').onclick=()=>{OPT.gore=OPT.gore===false;saveOpt();optModal()};$('#oArt').onclick=()=>{if(OPT.oldArt){OPT.oldArt=false;OPT.art='vec'}else if(OPT.art==='px'){OPT.oldArt=true}else OPT.art='px';SPR.clear();saveOpt();optModal()};
+ $('#oGore').onclick=()=>{OPT.gore=OPT.gore===false;saveOpt();optModal()};if(0)$('#oArt').onclick=()=>{if(OPT.oldArt){OPT.oldArt=false;OPT.art='vec'}else if(OPT.art==='px'){OPT.oldArt=true}else OPT.art='px';SPR.clear();saveOpt();optModal()};
  if($('#oMh')){$('#oMh').onclick=()=>{OPT.mHp=!OPT.mHp;saveOpt();optModal()};$('#oMb').onclick=()=>{OPT.mBoss=!OPT.mBoss;saveOpt();optModal()};$('#oMf').onclick=()=>{OPT.mNoF=!OPT.mNoF;saveOpt();optModal()}}
  $('#oAuto').onclick=()=>{if(!me)return;me.auto=!me.auto;save();optModal()};
  $('#btCl').onclick=close}
@@ -4457,7 +4477,7 @@ function gameOverCheck(){if(!me||running||me.run)return false;const can=me.team.
  $('#btGoNew').onclick=()=>{delete $('#modal').dataset.lock;try{localStorage.removeItem(KEY)}catch(_){}me=null;close();createScreen()};
  $('#btGoMenu').onclick=()=>{delete $('#modal').dataset.lock;try{localStorage.removeItem(KEY)}catch(_){}me=null;close();titleScreen()};
  sfx('lose');return true}
-$('#btSpd').addEventListener('click',e=>{SPEED=SPEED===1?2:SPEED===2?4:1;e.target.textContent='x'+SPEED});
+$('#btSpd').addEventListener('click',e=>{SPEED=SPEED===1?2:SPEED===2?4:SPEED===4?10:1;e.target.textContent='x'+SPEED});
 const sndL=()=>OPT.snd===false?'Silencio':OPT.snd==='fx'?'Sin música':'Música: sí';
 $('#btSnd').addEventListener('click',e=>{OPT.snd=OPT.snd===false?true:OPT.snd==='fx'?false:'fx';saveOpt();e.target.textContent=sndL();if(OPT.snd===true||OPT.snd===undefined){audio();if(running)musicStart(MUS.idx)}else musicStop()});
 $('#btSkip').addEventListener('click',()=>{if(running)skip=true});
