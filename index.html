@@ -572,7 +572,7 @@ Object.assign(AB,{
  carga:{n:'Carga con escudo',cd:5,t:'Embiste y aturde al rival'},
  espinas:{n:'Púas',cd:7,t:'Los 3 próximos golpes que recibas dañan al atacante'},
  medusa:{n:'Mirada de Medusa',cd:8,t:'Petrifica a todos los enemigos un turno'},
- grial:{n:'Santo Grial',cd:8,t:'Cura 40% a todo tu equipo'},
+ grial:{n:'Santo Grial',cd:8,t:'Cura 25% a todo tu equipo'},
  gjallar:{n:'Gjallarhorn',cd:8,t:'Tu equipo se enfurece y los enemigos pierden un turno'},
  renacer:{n:'Renacer',cd:8,t:'El fénix cura 40% a su dueño y quema a los enemigos'},
  llamarada:{n:'Llamarada',cd:7,t:'El dragón quema a todos los enemigos'},
@@ -3680,7 +3680,7 @@ function battle(TA,TB){
   carga:F=>{const tg=mainFoe(F);if(strike(F,tg,{mult:.9,noBlock:true})==='hit'&&tg.alive)status(tg,'stun',1,'Aturdido','#ffe08a');home(F)},
   espinas:F=>{F.st.thorns=5;buff(F,'Púas listas','#c3cad1')},
   medusa:F=>{ev.push({k:'boom',a:F.id,L:[],fx:'medusa'});foes(F.side).forEach(d=>status(d,'stun',1,'Petrificado','#c3cad1'))},
-  grial:F=>S[F.side].filter(x=>x.alive).forEach(x=>healF(x,Math.round(x.mhp*.4),'bebe del Grial')),
+  grial:F=>S[F.side].filter(x=>x.alive).forEach(x=>healF(x,Math.round(x.mhp*.25),'bebe del Grial')),
   gjallar:F=>{S[F.side].filter(x=>x.alive).forEach(x=>{x.st.rage=Math.max(x.st.rage||0,3)});buff(F,'¡Gjallarhorn!','#cfefff');foes(F.side).forEach(d=>status(d,'stun',1,'Aturdido','#ffe08a'))},
   renacer:(F,a,m)=>{healF(F,Math.round(F.mhp*.4),'renace en llamas');area(F.pet,6,10,m,true)},
   llamarada:(F,a,m)=>area(F.pet,14,20,m,true),
@@ -4211,7 +4211,7 @@ async function fight(team,foes,mode){FMODE=mode;
   if(c.kind==='f'){if(raid){if(c.side===1)[x,y]=[64,240];else[x,y]=R6[cnt[0]++%6]}else if(multi&&bossS[c.side]){if(c.f.boss)[x,y]=CLS[c.f.cls].body?[74,218]:[104,218];else[x,y]=FB[cnt[c.side]++%2]}else{const i=cnt[c.side]++;[x,y]=multi?F3[i]:[102,218]}gy=y;raw[c.id]=[x,y]}
   else{const o=raw[c.owner.id],fly=I[c.key].fly;if(raid){x=o[0]-(fly?14:24);y=fly?o[1]-60:o[1]+2;gy=o[1]+2}else if(multi){x=o[0]-(fly?28:50);y=fly?o[1]-88:o[1]+3;gy=o[1]+3}else{[x,y]=fly?[46,128]:[38,232];gy=232}}
   if(c.side)x=400-x;
-  return{spec:c.kind==='f'&&c.f.spec?SPEC[c.f.spec].n:'',id:c.id,kind:c.kind,side:c.side,key:c.key,v:c.v||0,sex:c.kind==='f'?(c.f.sex||'m'):'m',name:c.name,fame:c.kind==='f'?(c.f.fame||0):0,lvl:c.kind==='f'?c.f.lvl:0,sc:raid?(c.side?1:.62):sc,boss:c.kind==='f'&&!!c.f.boss,hp:c.mhp,mhp:c.mhp,L:c.kind==='f'?lookOf(c.f):null,x,y,hx:x,hy:y,gy,face:c.side?-1:1,w:null,alive:true,flash:0,swing:0,shield:0,aim:0,sq:0,lean:0,dash:0,trail:[],st:{},B:c}});
+  return{spec:c.kind==='f'&&c.f.spec?SPEC[c.f.spec].n:'',id:c.id,kind:c.kind,side:c.side,key:c.key,v:c.v||0,sex:c.kind==='f'?(c.f.sex||'m'):'m',name:c.name,fame:c.kind==='f'?(c.f.fame||0):0,lvl:c.kind==='f'?c.f.lvl:0,sc:(raid?(c.side?1:.62):sc)*(c.kind==='f'&&c.f.elite?1.3:1),boss:c.kind==='f'&&!!c.f.boss,hp:c.hp,mhp:c.mhp,L:c.kind==='f'?lookOf(c.f):null,x,y,hx:x,hy:y,gy,face:c.side?-1:1,w:null,alive:true,flash:0,swing:0,shield:0,aim:0,sq:0,lean:0,dash:0,trail:[],st:{},B:c}});
  const bars=$('#bars');bars.classList.toggle('multi',multi);bars.classList.toggle('raid',raid);
  bars.innerHTML=[0,1].map(s=>`<div class="side">${E.filter(e=>e.kind==='f'&&e.side===s).map(e=>`<div class="hb${s?' r':''}"><b>${e.name}</b><div class="b"><u id="c${e.id}"></u><i id="h${e.id}"></i></div><small id="t${e.id}"></small><div class="sti"><em class="lvt">Nv ${e.lvl}${e.spec?` · ${e.spec}`:''}</em><span id="s${e.id}" class="stx"></span></div></div>`).join('')}</div>`).join('<div class="vs">VS</div>');
  E.forEach(e=>{if(e.kind==='f')e.bar=[$('#h'+e.id),$('#c'+e.id),$('#t'+e.id),$('#s'+e.id)]});
@@ -4326,7 +4326,7 @@ function removeFighter(i){me.team.splice(i,1);const fx=x=>x>i?x-1:x;me.sel=me.se
  if(me.run){leaveParty(i);me.run.party=me.run.party.map(fx)}
  armIdx=0;if(!me.team.length)me.team.push(kitF('Novato','gladiador'));if(me.sel>=me.team.length)me.sel=0}
 function fallenQueue(){const f=post.fallen.shift();if(!f){afterDungeon();return}
- const i=me.team.indexOf(f);f.inj=4;f.wd=0;leaveParty(i);save();hdr();
+ const i=me.team.indexOf(f);f.inj=4;f.wd=0;if(me.run)me.run.fallen=(me.run.fallen||[]).concat([i]);leaveParty(i);save();hdr();
  modal(`<div class="big" style="color:#d0402b">¡${f.name} ha caído!</div><p>Sus compañeros lo sacan de la mazmorra. Vuelve a casa <b>herido por 4 combates</b>, pero conserva todo su equipo.</p><button class="wide" id="btCl">Continuar</button>`);$('#btCl').onclick=fallenQueue}
 function afterDungeon(){const r=me.run;delete $('#modal').dataset.lock;
  if(r&&(post.lost||!r.party.length)){endRun(false,post.lost?'Tu grupo cayó en la cripta. El botín de la expedición se perdió.':'Ya no queda nadie en la expedición. El botín se perdió.');return}
@@ -4343,10 +4343,12 @@ function makeMonster(cls,lvl,boss,elite,D){const di=D?DUNGEONS.indexOf(D):-1,nm=
  g.filter(k=>I[k].c==='w').sort(()=>Math.random()-.5).slice(0,boss?3:Math.min(3,1+Math.floor(lvl/4))).forEach(k=>equipAuto(f,mk(k,rr())));
  ['s','h','b','l','t','p'].forEach(c=>{const ks=g.filter(x=>I[x].c===c);if(ks.length&&Math.random()<(boss?1:elite?.6:.3))equipAuto(f,mk(pick(ks),rr()))});
  if(boss){f.boss=true;f.at.fue+=5;f.at.agi+=2;f.bon.hp=(f.bon.hp||0)+30+lvl*4;if(CLS[cls].body){f.bon.hp+=50+lvl*8;f.at.fue+=5;f.at.des+=3}if(cls==='orco'){f.bon.hp+=40+lvl*5;f.at.fue+=5}f.bk='d'+Math.max(0,DUNGEONS.indexOf(D));giveSpec(f)}else if(elite||Math.random()<.55)giveSpec(f);return f}
+const DELITE=[[['Caballero de Hueso','esqueleto'],['Sumo Sacerdote del Culto','cultista']],[['Contramaestre Ahogado','pirata'],['Capitán Fantasma','esqueleto']],[['Daimyo Maldito','samurai'],['Onryō Vengativo','espectro']],[['Capataz Sin Alma','nomuerto'],['Forajido Fantasma','vaquero']],[['Jarl Draugr','vikingo'],['Señor de los Huesos','esqueleto']],[['Señor Vampiro','vampiro'],['Gran Licántropo','hombrelobo']]];
+function makeElite(D,L){const di=Math.max(0,DUNGEONS.indexOf(D)),[nm,cls0]=pick(DELITE[di]||DELITE[0]),cls=CLS[cls0]?cls0:pick(D.mons),f=makeMonster(cls,L+3,false,true,D);f.name='💀 '+nm;f.elite=1;f.bon.hp=(f.bon.hp||0)+40+L*5;f.at.fue+=4;f.at.vig+=3;f.at.des+=2;derive(f);return f}
 function dungeonFoes(type){const r=me.run,n=r.party.length,D=DUNGEONS[r.dk||0],L=Math.min(D.hi+2,Math.max(D.lo,Math.min(D.hi,r.lvl))+Math.floor(r.floor*.6)+1);if(type==='guardian')return[makeMonster(D.boss[0],L+4,true,false,D),...Array.from({length:Math.min(2,n)},()=>makeMonster(pick(D.mons),L+1,false,true,D))];
- const cnt=Math.min(3,n+(type==='elite'||r.floor>=4?1:0));return Array.from({length:cnt},()=>makeMonster(pick(D.mons),L+(type==='elite'?3:0),false,type==='elite',D))}
+ const cnt=Math.min(3,n+(type==='elite'||r.floor>=4?1:0));const out=Array.from({length:cnt},()=>makeMonster(pick(D.mons),L+(type==='elite'?3:0),false,type==='elite',D));if(type==='elite')out[0]=makeElite(D,L);else if(r.floor>=6&&Math.random()<.25)out[0]=makeElite(D,L-2);return out}
 const DEPTH=11,NICON={combate:'⚔️',elite:'💀',tesoro:'💰',fuente:'⛲',misterio:'❓',guardian:'👑'};
-function genMap(){const M=[],typ=(l)=>{if(l===0)return'combate';const w=[['combate',50],['elite',l>2?18:0],['tesoro',l===5?40:9],['fuente',OPT.ngp&&OPT.mNoF?0:l===7?55:(l>3?7:0)],['misterio',13]];let x=Math.random()*w.reduce((a,b)=>a+b[1],0),i=0;while((x-=w[i][1])>0&&i<w.length-1)i++;return w[i][0]};
+function genMap(){const M=[],typ=(l)=>{if(l===0)return'combate';const w=[['combate',50],['elite',l>2?18:0],['tesoro',l===5?40:9],['fuente',OPT.ngp&&OPT.mNoF?0:l===7?25:(l>3?3:0)],['misterio',16]];let x=Math.random()*w.reduce((a,b)=>a+b[1],0),i=0;while((x-=w[i][1])>0&&i<w.length-1)i++;return w[i][0]};
  for(let l=0;l<DEPTH-1;l++){const n=l===0?3:R(3,4);M.push(Array.from({length:n},(_,i)=>({t:typ(l),x:(i+1)/(n+1)+(Math.random()-.5)*.08,n:[]})))}
  M.push([{t:'guardian',x:.5,n:[]}]);
  for(let l=0;l<DEPTH-1;l++){const A=M[l],B=M[l+1];
@@ -4361,7 +4363,7 @@ function mapHTML(r){const M=r.map,H=M.length*64+20,av=mapAvail(r),isAv=(l,i)=>av
  const nodes=M.map((row,l)=>row.map((nd,i)=>{const done=vis.some(([a,b])=>a===l&&b===i),cur=r.at&&r.at[0]===l&&r.at[1]===i,can=isAv(l,i);return`<button class="mn t-${nd.t}${done?' done':''}${cur?' cur':''}${can?' can':''}" style="left:${nd.x*100}%;top:${y(l)}px" ${can?`data-l="${l}" data-i="${i}"`:'disabled'} title="${DOORS[nd.t][0]}"><span>${NICON[nd.t]}</span></button>`}).join('')).join('');
  return`<div class="mapw" id="mapw"><div class="map" style="height:${H}px"><svg viewBox="0 0 100 ${H}" preserveAspectRatio="none">${lines}</svg>${nodes}</div></div><div class="mleg">${Object.keys(NICON).map(k=>`<span>${NICON[k]} ${DOORS[k][0]}</span>`).join('')}</div>`}
 const DOORS={combate:['Combate','Monstruos de la mazmorra'],elite:['Élite','Enemigos duros, mejor botín'],tesoro:['Tesoro','Un cofre… ¿o una trampa?'],fuente:['Fuente','Recupera 40% de vida'],misterio:['Misterio','Nadie sabe qué hay'],guardian:['Jefe','El amo de la mazmorra']};
-function genDoors(r){if(r.floor>=DEPTH-1)return['guardian'];const w=[['combate',45],['elite',r.floor>0?16:0],['tesoro',15],['fuente',OPT.ngp&&OPT.mNoF?0:12],['misterio',14]],out=[];
+function genDoors(r){if(r.floor>=DEPTH-1)return['guardian'];const w=[['combate',45],['elite',r.floor>0?16:0],['tesoro',15],['fuente',OPT.ngp&&OPT.mNoF?0:6],['misterio',16]],out=[];
  while(out.length<3){let x=Math.random()*w.reduce((a,b)=>a+b[1],0),i=0;while((x-=w[i][1])>0&&i<w.length-1)i++;out.push(w[i][0])}return out}
 const runHP=k=>{const r=me.run,f=me.team[r.party[k]],mh=maxHP(f);return r.hp[k]==null?mh:Math.min(mh,r.hp[k])};
 function dunLv(){const r=me.run,D=DUNGEONS[(r&&r.dk)||0];const pl=r?Math.min(...r.party.map(i=>me.team[i]?me.team[i].lvl:1)):1;return Math.max(1,Math.min(D.lo,pl),Math.min(D.hi,pl)-R(0,1))}
@@ -4412,9 +4414,22 @@ function rDungeon(){const el=$('#advBody'),r=me.run;
 function endRun(keep,msg){const r=me.run;me.run=null;let h=`<p>${msg}</p>`;if(keep){me.inv.push(...r.bag);me.gold+=r.gold;h+=`<p>+${r.gold} de oro${r.bag.length?` · ${r.bag.length} objeto${r.bag.length>1?'s':''} a la mochila`:''}</p>`+(r.bag.length?`<div class="list">${r.bag.map(it=>itemRow(it)).join('')}</div>`:'')}save();hdr();
  if(keep)sfx('win');
  modal(`<div class="big">${keep?'De vuelta':'Expedición perdida'}</div>${h}<button class="wide" id="btCl">Continuar</button>`);drawIcons($('#box'));$('#btCl').onclick=()=>{close();tab='torneo';me.adv='m';home()}}
+function dgGold(){return me.run.gold+me.gold}
+function dgPay(c){const r=me.run,a=Math.min(r.gold,c);r.gold-=a;me.gold-=c-a}
+function dgEvent(d){const r=me.run,fin=(ttl,txt,items)=>{nextFloor();save();hdr();modal(`<div class="big">${ttl}</div><p>${txt}</p>${items&&items.length?`<div class="list">${items.map(it=>itemRow(it)).join('')}</div>`:''}<button class="wide" id="btCl">Seguir</button>`);drawIcons($('#box'));$('#btCl').onclick=()=>{close();rAdv()}};
+ if(d==='mercader'){const S=SETS[r.dk||0];if(!S){d='herrero'}else{const cs=['h','b','l','sh','be','bo'].sort(()=>Math.random()-.5).slice(0,3),its=cs.map(c=>{const it=mk('set'+(r.dk||0)+'_'+c,2);it.lv=dunLv();return it}),pr=its.map(()=>140+dunLv()*14);
+  modal(`<div class="big">🧳 Mercader de la cripta</div><p>Un comerciante encapuchado ofrece piezas del set <b>${S.n}</b>. Solo te deja comprar <b>una</b>. Tienes ${dgGold()} de oro (bolsa + reserva).</p><div class="list">${its.map((it,i)=>`<div>${itemRow(it)}<button class="sm" data-buy="${i}" ${dgGold()<pr[i]?'disabled':''}>Comprar · ${pr[i]} oro</button></div>`).join('')}</div><button class="ghost wide" id="btNo">No comprar</button>`);drawIcons($('#box'));
+  $('#box').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const i=+b.dataset.buy;dgPay(pr[i]);r.bag.push(its[i]);sfx('coin');close();fin('Trato hecho','El mercader desaparece entre las sombras.',[its[i]])});$('#btNo').onclick=()=>{close();fin('Mercader','Sigues tu camino.')};return}}
+ if(d==='altar'){const fl=(r.fallen||[]).filter(i=>me.team[i]&&!r.party.includes(i));if(fl.length){modal(`<div class="big">🕯️ Altar de las almas</div><p>Un altar antiguo puede devolver a un caído a la expedición (vuelve con 40% de vida y sin heridas).</p><div class="pick">${fl.map(i=>`<button class="pk" data-rv="${i}"><b>${me.team[i].name}</b><small>Nv ${me.team[i].lvl}</small></button>`).join('')}</div><button class="ghost wide" id="btNo">Dejarlo descansar</button>`);
+   $('#box').querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rv,f=me.team[i];f.inj=0;r.fallen=r.fallen.filter(x=>x!==i);r.party.push(i);r.hp.push(Math.round(maxHP(f)*.4));sfx('heal');close();fin('¡Ha vuelto!',`${f.name} regresa de entre los muertos.`)});$('#btNo').onclick=()=>{close();fin('Altar','El altar se apaga.')};return}
+  r.party.forEach((ti,k)=>{const mh=maxHP(me.team[ti]);r.hp[k]=Math.min(mh,runHP(k)+Math.round(mh*.15))});sfx('heal');return fin('🕯️ Altar de las almas','Nadie ha caído. El altar los bendice: +15% de vida.')}
+ if(d==='herrero'){const up=r.bag.filter(it=>!I[it.k].emb&&(it.r||0)<3);if(up.length){const it=pick(up);it.r=(it.r||0)+1;sfx('bell');return fin('⚒️ Herrero fantasma',`Mejora tu ${I[it.k].n} a una rareza superior.`,[it])}const g=20+r.floor*6;r.gold+=g;sfx('coin');return fin('⚒️ Herrero fantasma',`No tienes nada que mejorar; te paga ${g} de oro por ayudarlo.`)}
+ if(d==='dados'){const bet=Math.max(20,Math.round(r.gold*.5));modal(`<div class="big">🎲 Apostador de huesos</div><p>Un esqueleto te reta a los dados: apuesta <b>${bet}</b> de oro. Si ganas, la duplicas.</p><button class="wide" id="btBet" ${dgGold()<bet?'disabled':''}>Apostar ${bet}</button><button class="ghost wide" id="btNo">No apostar</button>`);
+  $('#btBet').onclick=()=>{close();if(Math.random()<.5){r.gold+=bet;sfx('coin');fin('¡Ganaste!',`Los dados te sonríen: +${bet} de oro.`)}else{dgPay(bet);sfx('boo');fin('Perdiste',`El esqueleto se ríe y se lleva ${bet} de oro.`)}};$('#btNo').onclick=()=>{close();fin('Apostador','El esqueleto se encoge de hombros.')}}}
 function nextFloor(){const r=me.run;if(r.go){r.at=r.go;r.path=(r.path||[]).concat([r.go]);r.floor=r.go[0]+1;r.go=null}else r.floor++;save()}
 function openDoor(d){const r=me.run;
- if(d==='misterio'){const x=Math.random();d=x<.05?'santuario':x<.3?'tesoroG':x<.55?'trampa':x<.75?'fuente':'emboscada'}
+ if(d==='misterio'){const x=Math.random();d=x<.05?'santuario':x<.2?'tesoroG':x<.33?'trampa':x<.4?'fuente':x<.52?'emboscada':x<.66?'mercader':x<.76?'altar':x<.87?'herrero':'dados'}
+ if(['mercader','altar','herrero','dados'].includes(d)){dgEvent(d);return}
  if(['combate','elite','guardian','emboscada'].includes(d)){const type=d==='emboscada'?'elite':d;r.cur=type;save();const party=r.party.map((ti,k)=>{const f=me.team[ti];f._dhp=runHP(k);return f});fight(party,dungeonFoes(type),'dungeon');return}
  let ttl='',txt='';const items=[];
  if(d==='fuente'){r.party.forEach((ti,k)=>{const mh=maxHP(me.team[ti]);r.hp[k]=Math.min(mh,runHP(k)+Math.round(mh*.35))});ttl='Fuente';txt='El agua brilla. Tu grupo recupera 35% de vida.';sfx('heal')}
